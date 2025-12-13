@@ -6,9 +6,6 @@
 //GLAD
 #include <glad/glad.h>
 
-//GLFW
-#include <GLFW/glfw3.h>
-
 //GLM
 #include "glm/ext/vector_float3.hpp"
 #include <glm/gtc/type_ptr.hpp> //Access to the value_ptr
@@ -25,6 +22,7 @@
 #include "Underwater_explore.h"
 
 #include "proceduralGeneration.h"
+#include "collectable.h"
 
 #include "variables.h"
 
@@ -110,6 +108,9 @@ int main()
 
     player = new Player();
 
+    Collectable* collect = new Collectable();
+    collect->bind();
+
     //Determines if first entry of mouse into window
     bool mouseFirstEntry = true;
     
@@ -152,6 +153,7 @@ int main()
 
         //Drawing
         map->draw();
+        collect->draw();
 
         //Refreshing
         glfwSwapBuffers(window); //Swaps the colour buffer

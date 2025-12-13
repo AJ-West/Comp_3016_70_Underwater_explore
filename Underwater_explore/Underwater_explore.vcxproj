@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="collectable.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="proceduralGeneration.cpp" />
@@ -145,6 +146,7 @@
     <ClCompile Include="variables.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="collectable.h" />
     <ClInclude Include="FastNoiseLite.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="proceduralGeneration.h" />
