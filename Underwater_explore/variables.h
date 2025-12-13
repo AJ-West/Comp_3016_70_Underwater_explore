@@ -1,5 +1,4 @@
 #pragma once
-#include <glad/glad.h>
 
 #ifndef VARIABLES_H
 #define VARIABLES_H
@@ -16,6 +15,8 @@ static const int trianglesGrid = squaresRow * squaresRow * trianglesPerSquare;
 
 //const float chunkSize = -0.0625f;
 const float chunkSize = -0.25f;
+
+extern float deltaTime;
 
 
 #endif // !VARIABLES_H

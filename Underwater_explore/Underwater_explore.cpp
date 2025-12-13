@@ -37,30 +37,22 @@ int windowHeight = 720;
 
 GLuint program;
 
-//Transformations
-mat4 transform;
-
-//Transformations
-//Relative position within world space
-vec3 cameraPosition = vec3(-24.5f, 5.0f, -24.5f);
-//The direction of travel
-vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
-//Up position within world space
-vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);
+Player* player;
 
 //Camera sideways rotation
 float cameraYaw = -90.0f;
 //Camera vertical rotation
 float cameraPitch = 0.0f;
-//Determines if first entry of mouse into window
+//if first time mouse is on window
 bool mouseFirstEntry = true;
 //Positions of camera from given last frame
 float cameraLastXPos = 800.0f / 2.0f;
 float cameraLastYPos = 600.0f / 2.0f;
 
+//Transformations
+mat4 transform;
+
 //Time
-//Time change
-float deltaTime = 0.0f;
 //Last value of time change
 float lastFrame = 0.0f;
 
@@ -115,6 +107,11 @@ int main()
     ProcGen* map = new ProcGen();
 
     map->procTerrainGen();
+
+    player = new Player();
+
+    //Determines if first entry of mouse into window
+    bool mouseFirstEntry = true;
     
     //Model matrix
     model = mat4(1.0f);
@@ -137,7 +134,7 @@ int main()
         lastFrame = currentFrame;
 
         //Input
-        ProcessUserInput(window); //Takes user input
+        ProcessUserInput(window, player); //Takes user input
 
         //Rendering
         glClearColor(0.25f, 0.0f, 1.0f, 1.0f); //Colour to display on cleared window
@@ -150,7 +147,7 @@ int main()
 
         //Transformations & Drawing
         //Viewer orientation
-        view = lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp); //Sets the position of the viewer, the movement direction in relation to it & the world up direction
+        view = lookAt(player->getCameraPosition(), player->getCameraPosition() + player->getCameraFront(), player->getCameraUp()); //Sets the position of the viewer, the movement direction in relation to it & the world up direction
         SetMatrices(Shaders);
 
         //Drawing
@@ -173,7 +170,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void ProcessUserInput(GLFWwindow* WindowIn)
+void ProcessUserInput(GLFWwindow* WindowIn, Player* player)
 {
     //Closes window on 'exit' key press
     if (glfwGetKey(WindowIn, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -181,31 +178,9 @@ void ProcessUserInput(GLFWwindow* WindowIn)
         glfwSetWindowShouldClose(WindowIn, true);
     }
 
-    //Extent to which to move in one instance
-    float movementSpeed = 2.0f * deltaTime;
+    player->handleInput(WindowIn);
 
-    if (glfwGetKey(WindowIn, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    {
-        movementSpeed *= 2;
-    }
-
-    //WASD controls
-    if (glfwGetKey(WindowIn, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        cameraPosition += movementSpeed * cameraFront;
-    }
-    if (glfwGetKey(WindowIn, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        cameraPosition -= movementSpeed * cameraFront;
-    }
-    if (glfwGetKey(WindowIn, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        cameraPosition -= normalize(cross(cameraFront, cameraUp)) * movementSpeed;
-    }
-    if (glfwGetKey(WindowIn, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        cameraPosition += normalize(cross(cameraFront, cameraUp)) * movementSpeed;
-    }
+    
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -250,7 +225,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     direction.x = cos(radians(cameraYaw)) * cos(radians(cameraPitch));
     direction.y = sin(radians(cameraPitch));
     direction.z = sin(radians(cameraYaw)) * cos(radians(cameraPitch));
-    cameraFront = normalize(direction);
+    player->setCameraFront(normalize(direction));
 }
 
 void SetMatrices(Shader& ShaderProgramIn)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glad/glad.h> 
+
 #include "FastNoiseLite.h"
 
 #include "variables.h"
