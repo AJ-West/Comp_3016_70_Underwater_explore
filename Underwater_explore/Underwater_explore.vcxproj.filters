@@ -27,6 +27,12 @@
     <ClCompile Include="stbImageLoader.cpp">
       <Filter>Source Files\dependent files</Filter>
     </ClCompile>
+    <ClCompile Include="proceduralGeneration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="variables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FastNoiseLite.h">
@@ -36,6 +42,12 @@
       <Filter>Source Files\dependent files</Filter>
     </ClInclude>
     <ClInclude Include="Underwater_explore.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="proceduralGeneration.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="variables.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,5 +13,3 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 //Sets the model-view-projection matrix
 void SetMatrices(Shader& ShaderProgramIn);
-
-void procTerrainGen();

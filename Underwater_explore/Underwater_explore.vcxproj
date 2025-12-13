@@ -138,13 +138,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="proceduralGeneration.cpp" />
     <ClCompile Include="stbImageLoader.cpp" />
     <ClCompile Include="Underwater_explore.cpp" />
+    <ClCompile Include="variables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FastNoiseLite.h" />
+    <ClInclude Include="proceduralGeneration.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Underwater_explore.h" />
+    <ClInclude Include="variables.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragmentShader.frag" />
