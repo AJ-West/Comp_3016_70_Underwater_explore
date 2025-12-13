@@ -19,12 +19,12 @@
 #include <learnopengl/shader_m.h>
 #include <learnopengl/model.h>
 
+#include "variables.h"
+
 #include "Underwater_explore.h"
 
 #include "proceduralGeneration.h"
 #include "collectable.h"
-
-#include "variables.h"
 
 using namespace glm;
 using namespace std;
@@ -121,12 +121,13 @@ int main()
     //Rotation to look down
     model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
     //Movement to position further back
-    model = translate(model, vec3(0.0f, -2.f, -1.5f));
+    //model = translate(model, vec3(0.0f, -2.f, -1.5f));
+    model = translate(model, vec3(0.0f, 0.0f, 0.0f));
 
     //Projection matrix
     projection = perspective(radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
       
-    //Render loop
+    //Game loop
     while (glfwWindowShouldClose(window) == false)
     {
         //Time
@@ -136,6 +137,9 @@ int main()
 
         //Input
         ProcessUserInput(window, player); //Takes user input
+
+        //collision checks
+        player->checkCollision(collect);
 
         //Rendering
         glClearColor(0.25f, 0.0f, 1.0f, 1.0f); //Colour to display on cleared window

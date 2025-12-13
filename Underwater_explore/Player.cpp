@@ -29,3 +29,17 @@ void Player::handleInput(GLFWwindow* WindowIn) {
         cameraPosition += normalize(cross(cameraFront, cameraUp)) * movementSpeed;
     }
 }
+
+void Player::checkCollision(Collectable* collect) {
+    vec3 tCentre = collect->getCentrePoint();
+    float tSize = collect->getSize();
+
+    vec3 diff = tCentre - cameraPosition;
+    float mag = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
+
+    cout << mag << '\n';
+    cout << tSize << '\n';
+    if (mag <= tSize) {
+        cout << "colliding" << '\n';
+    }
+}
