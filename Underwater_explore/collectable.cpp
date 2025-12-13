@@ -1,6 +1,22 @@
 #include "collectable.h"
 
-Collectable::Collectable(){}
+Collectable::Collectable(vec3 position): centrePoint(position){
+    vertices[0] = centrePoint.x + 0.0f;
+    vertices[1] = centrePoint.y + 0.0f;
+    vertices[2] = centrePoint.z + 0.0f;
+
+    vertices[6] = centrePoint.x + size;
+    vertices[7] = centrePoint.y + 0.0f;
+    vertices[8] = centrePoint.z + 0.0f;
+
+    vertices[12] = centrePoint.x + size;
+    vertices[13] = centrePoint.y + size;
+    vertices[14] = centrePoint.z + size;
+
+    vertices[18] = centrePoint.x + 0.0f;
+    vertices[19] = centrePoint.y + 0.0f;
+    vertices[20] = centrePoint.z + size;
+}
 
 Collectable::~Collectable(){}
 

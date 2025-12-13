@@ -37,8 +37,6 @@ void Player::checkCollision(Collectable* collect) {
     vec3 diff = tCentre - cameraPosition;
     float mag = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
 
-    cout << mag << '\n';
-    cout << tSize << '\n';
     if (mag <= tSize) {
         cout << "colliding" << '\n';
     }

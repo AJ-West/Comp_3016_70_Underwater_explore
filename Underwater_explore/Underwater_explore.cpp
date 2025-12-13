@@ -106,10 +106,12 @@ int main()
 
     map->procTerrainGen();
 
-    player = new Player();
+    vector<Collectable*> collectables = map->generateCollectables();
+    for (auto collect : collectables) {
+        collect->bind();
+    }
 
-    Collectable* collect = new Collectable();
-    collect->bind();
+    player = new Player();    
 
     //Determines if first entry of mouse into window
     bool mouseFirstEntry = true;
@@ -139,8 +141,10 @@ int main()
         ProcessUserInput(window, player); //Takes user input
 
         //collision checks
-        player->checkCollision(collect);
-
+        for (auto collect : collectables) {
+            player->checkCollision(collect);
+        }
+        
         //Rendering
         glClearColor(0.25f, 0.0f, 1.0f, 1.0f); //Colour to display on cleared window
         glClear(GL_COLOR_BUFFER_BIT); //Clears the colour buffer
@@ -157,7 +161,9 @@ int main()
 
         //Drawing
         map->draw();
-        collect->draw();
+        for (auto collect : collectables) {
+            collect->draw();
+        } 
 
         //Refreshing
         glfwSwapBuffers(window); //Swaps the colour buffer

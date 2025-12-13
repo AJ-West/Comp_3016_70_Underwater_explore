@@ -1,8 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include <glad/glad.h> 
 
 #include "FastNoiseLite.h"
+
+#include "collectable.h"
 
 #include "variables.h"
 
@@ -24,6 +28,8 @@ public:
     void generateVertices();
 
     void generateChunks();
+
+    vector<Collectable*> generateCollectables();
 
     void bind();
 

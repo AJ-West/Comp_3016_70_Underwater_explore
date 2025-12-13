@@ -154,6 +154,19 @@ void ProcGen::generateChunks() {
     }
 }
 
+vector<Collectable*> ProcGen::generateCollectables() {
+    vector<Collectable*> collectables;
+    for (int i = 0; i <= 5; i++) {
+        // find location not on the outer cells
+        int row = 1 + rand() % RENDER_DISTANCE - 2;
+        int col = 1 + rand() % RENDER_DISTANCE - 2;
+        int pos = row * RENDER_DISTANCE + col;
+        vec3 collectPos = vec3(terrainVertices[pos][0], terrainVertices[pos][1]+0.5f, terrainVertices[pos][2]);
+        collectables.emplace_back(new Collectable(collectPos));
+    }
+    return collectables;
+}
+
 void ProcGen::bind() {
     //Sets index of VAO
     glGenVertexArrays(NumVAOs, VAOs);

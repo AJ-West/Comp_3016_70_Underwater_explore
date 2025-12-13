@@ -35,7 +35,7 @@ private:
 	float baseSpeed = 2.0f;
 
 	//Relative position within world space
-	vec3 cameraPosition = vec3(0.0f, 0.0f, 0.0f);
+	vec3 cameraPosition = vec3(0.0f, 0.0f, 0.5f);
 	//vec3 cameraPosition = vec3(-24.5f, 5.0f, -24.5f);
 	//The direction of travel
 	vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
