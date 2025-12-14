@@ -20,7 +20,7 @@ public:
     void draw();
 
     //getters
-    vec3 getCentrePoint() { return centrePoint; }
+    vec3 getCentrePoint() { return centrePoint + vec3(size/2,size/2,size/2); }
     float getSize() { return size; }
 
 private:

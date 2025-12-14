@@ -126,6 +126,15 @@ int main()
     //model = translate(model, vec3(0.0f, -2.f, -1.5f));
     model = translate(model, vec3(0.0f, 0.0f, 0.0f));
 
+    mat4 model2 = mat4(1.0f);
+    //Scaling to zoom in
+    model2 = scale(model, vec3(1.0f, 1.0f, 1.0f));
+    //Rotation to look down
+    model2 = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    //Movement to position further back
+    //model = translate(model, vec3(0.0f, -2.f, -1.5f));
+    model2 = translate(model, vec3(0.0f, 0.0f, 0.0f));
+
     //Projection matrix
     projection = perspective(radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
       
@@ -161,10 +170,28 @@ int main()
 
         //Drawing
         map->draw();
+        // the collectables should be continuously rotating
+        SetMatrices(Shaders);
+        
         for (auto collect : collectables) {
-            collect->draw();
+            float time = (float)glfwGetTime();
+            vec3 center = collect->getCentrePoint();
+            //cout << "x " << center.x << '\n';
+            //cout << "y " << center.y << '\n';
+            //cout << "z " << center.z << '\n';
+            model2 = mat4(1.0f);
+            model2 = translate(model2, center);
+            model2 = rotate(model2, time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+            model2 = translate(model2, vec3(-center.x, 0.0f, -center.z));
+            model2 = translate(model2, vec3(0.0f, sin(time)/10, 0.0f));
+            mvp = projection * view * model2; //Setting of MVP
+            Shaders.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
+            //model2 = translate(model, -collect->getCentrePoint());
+            collect->draw();   
+            model2 = translate(model2, vec3(0.0f, -sin(time)/10, 0.0f));
         } 
-
+        //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        SetMatrices(Shaders);
         //Refreshing
         glfwSwapBuffers(window); //Swaps the colour buffer
         glfwPollEvents(); //Queries all GLFW events
