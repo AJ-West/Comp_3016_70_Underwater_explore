@@ -10,6 +10,8 @@
 
 #include "variables.h"
 
+#include "stb_image.h"
+
 using namespace std;
 
 class ProcGen {
@@ -29,6 +31,8 @@ public:
 
     void generateChunks();
 
+    void generateTextures();
+
     vector<Collectable*> generateCollectables();
 
     void bind();
@@ -44,7 +48,7 @@ private:
     GLuint terrainIndices[trianglesGrid][3];
 
     //Generation of height map vertices
-    GLfloat terrainVertices[MAP_SIZE][6];
+    GLfloat terrainVertices[MAP_SIZE][5];
 
     //VAO vertex attribute positions in correspondence to vertex attribute type
     enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };

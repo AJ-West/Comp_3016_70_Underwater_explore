@@ -34,9 +34,11 @@ void ProcGen::procTerrainGen() {
     // generates the indicies for the map chuncks
     generateChunks();
 
+    generateTextures();
+
     bind();
 }
-
+/*
 void ProcGen::biomeGeneration() {
     //Terrain vertice index
     int i = 0;
@@ -80,6 +82,57 @@ void ProcGen::biomeGeneration() {
                 terrainVertices[i][4] = 0.0f;
                 terrainVertices[i][5] = 0.0f;
             }
+
+            i++;
+        }
+    }
+}*/
+
+void ProcGen::biomeGeneration() {
+    //Terrain vertice index
+    int i = 0;
+    //Using x & y nested for loop in order to apply noise 2-dimensionally
+    for (int y = 0; y < RENDER_DISTANCE; y++)
+    {
+        for (int x = 0; x < RENDER_DISTANCE; x++)
+        {
+            //Retrieval of biome to set
+            float biomeValue = BiomeNoise.GetNoise((float)x, (float)y);
+
+            if (biomeValue <= -0.75f) //Plains
+            {
+                terrainVertices[i][3] = 0.0f;
+                terrainVertices[i][4] = 0.0f;
+                //terrainVertices[i][5] = 0.25f;
+            }
+            else //Murky
+            {
+                terrainVertices[i][3] = 0.5f;
+                terrainVertices[i][4] = 0.0f;
+                //terrainVertices[i][5] = 0.5f;
+            }
+
+            //Setting of height from 2D noise value at respective x & y coordinate
+            float noiseVal = TerrainNoise.GetNoise((float)x, (float)y);
+            if (noiseVal >= 0.4) {
+                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 10;
+            }
+            else if (noiseVal >= 0.25) {
+                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 7.5;
+            }
+            else if (noiseVal >= 0) {
+                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 5;
+            }
+            else {
+                terrainVertices[i][1] = -TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y);
+            }
+            if (terrainVertices[i][1] <= -0.25) {
+                terrainVertices[i][3] = 0.0f;
+                terrainVertices[i][4] = 0.5f;
+                //terrainVertices[i][5] = 0.0f;
+            }
+            //terrainVertices[i][3] = float(x)/RENDER_DISTANCE;
+            //terrainVertices[i][4] = float(y) / RENDER_DISTANCE;
 
             i++;
         }
@@ -154,6 +207,25 @@ void ProcGen::generateChunks() {
     }
 }
 
+void ProcGen::generateTextures() {
+    //Terrain vertice index
+    int i = 0;
+    //Using x & y nested for loop in order to apply noise 2-dimensionally
+    for (int y = 0; y < RENDER_DISTANCE; y++)
+    {
+        for (int x = 0; x < RENDER_DISTANCE; x++)
+        {
+            if (x % 2 != 0) {
+                terrainVertices[i][4] += 0.5f;
+            }
+            if (y %2 != 0) {
+                terrainVertices[i][3] += 0.5f;
+            }
+            i++;
+        }
+    }
+}
+
 vector<Collectable*> ProcGen::generateCollectables() {
     vector<Collectable*> collectables;
     for (int i = 0; i <= 5; i++) {
@@ -166,7 +238,7 @@ vector<Collectable*> ProcGen::generateCollectables() {
     }
     return collectables;
 }
-
+/*
 void ProcGen::bind() {
     //Sets index of VAO
     glGenVertexArrays(NumVAOs, VAOs);
@@ -212,6 +284,79 @@ void ProcGen::bind() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     //Sets to use linear interpolation upscaling (past largest mipmap texture)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}*/
+
+
+void ProcGen::bind() {
+
+    //Sets index of VAO
+    glGenVertexArrays(NumVAOs, VAOs);
+    //Binds VAO to a buffer
+    glBindVertexArray(VAOs[0]);
+    //Sets indexes of all required buffer objects
+    glGenBuffers(NumBuffers, Buffers);
+
+    //Binds vertex object to array buffer
+    glBindBuffer(GL_ARRAY_BUFFER, Buffers[Triangles]);
+    //Allocates buffer memory for the vertices of the 'Triangles' buffer
+    glBufferData(GL_ARRAY_BUFFER, sizeof(terrainVertices), terrainVertices, GL_STATIC_DRAW);
+
+    //Binding & allocation for indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffers[Indices]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(terrainIndices), terrainIndices, GL_STATIC_DRAW);
+
+    //Allocation & indexing of vertex attribute memory for vertex shader
+    //Positions
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    //Textures
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    //Textures to generate
+    glGenTextures(NumBuffers, Buffers);
+
+    //Unbinding
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    //Binding texture to type 2D texture
+    glBindTexture(GL_TEXTURE_2D, Buffers[Textures]);
+
+    //Selects x axis (S) of texture bound to GL_TEXTURE_2D & sets to repeat beyond normalised coordinates
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    //Selects y axis (T) equivalently
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    //Sets to use linear interpolation between adjacent mipmaps
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    //Sets to use linear interpolation upscaling (past largest mipmap texture)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //Parameters that will be sent & set based on retrieved texture
+    int width, height, colourChannels;
+    //Retrieves texture data
+    unsigned char* data = stbi_load("art/environment.png", &width, &height, &colourChannels, 0);
+
+    if (data) //If retrieval successful
+    {
+        GLenum format = (colourChannels == 4) ? GL_RGBA : GL_RGB;
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+        //Generation of texture from retrieved texture data
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        //Automatically generates all required mipmaps on bound texture
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else //If retrieval unsuccessful
+    {
+        cout << "Failed to load texture.\n";
+        return;
+    }
+
+    //Clears retrieved texture from memory
+    stbi_image_free(data);
 }
 
 void ProcGen::draw() {
