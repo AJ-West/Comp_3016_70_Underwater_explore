@@ -48,7 +48,7 @@ private:
     GLuint terrainIndices[trianglesGrid][3];
 
     //Generation of height map vertices
-    GLfloat terrainVertices[MAP_SIZE][5];
+    GLfloat terrainVertices[MAP_SIZE][8];
 
     //VAO vertex attribute positions in correspondence to vertex attribute type
     enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };

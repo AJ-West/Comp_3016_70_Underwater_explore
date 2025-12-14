@@ -6,6 +6,9 @@
 #include <GLFW/glfw3.h>
 #include "glm/ext/vector_float3.hpp"
 
+#include "stb_image.h"
+
+using namespace std;
 using namespace glm;
 
 class Collectable {
@@ -23,12 +26,12 @@ public:
 private:
     float size = 0.25f;
 
-    float vertices[24] = {
-        //positions             //colours
-        0.0f,0.0f,0.0f,       1.0f, 1.0f, 0.0f, //top right
-        0.0f,0.0f,0.0f,      1.0f, 1.0f, 0.0f, //bottom right
-        0.0f,0.0f,0.0f,     1.0f, 1.0f, 0.0f, //bottom left
-        0.0f,0.0f,0.0f,      1.0f, 1.0f, 0.0f //top left
+    float vertices[32] = {
+        //positions          //colours          //texture
+        0.0f,0.0f,0.0f,      1.0f, 1.0f, 1.0f,  0.0f, 0.0f,  //top right
+        0.0f,0.0f,0.0f,      1.0f, 1.0f, 1.0f,  0.0f, 1.0f,  //bottom right
+        0.0f,0.0f,0.0f,      1.0f, 1.0f, 1.0f,  1.0f, 0.0f,  //bottom left
+        0.0f,0.0f,0.0f,      1.0f, 1.0f, 1.0f,  1.0f, 1.0f,  //top left
     };
 
     unsigned int indices[12] = {

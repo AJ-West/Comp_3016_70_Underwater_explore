@@ -101,14 +101,20 @@ void ProcGen::biomeGeneration() {
 
             if (biomeValue <= -0.75f) //Plains
             {
-                terrainVertices[i][3] = 0.0f;
-                terrainVertices[i][4] = 0.0f;
+                terrainVertices[i][3] = 0.5f;
+                terrainVertices[i][4] = 0.5f;
+                terrainVertices[i][5] = 0.5f;
+                terrainVertices[i][6] = 0.0f;
+                terrainVertices[i][7] = 0.0f;
                 //terrainVertices[i][5] = 0.25f;
             }
             else //Murky
             {
                 terrainVertices[i][3] = 0.5f;
-                terrainVertices[i][4] = 0.0f;
+                terrainVertices[i][4] = 0.5f;
+                terrainVertices[i][5] = 0.5f;
+                terrainVertices[i][6] = 0.5f;
+                terrainVertices[i][7] = 0.0f;
                 //terrainVertices[i][5] = 0.5f;
             }
 
@@ -127,8 +133,11 @@ void ProcGen::biomeGeneration() {
                 terrainVertices[i][1] = -TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y);
             }
             if (terrainVertices[i][1] <= -0.25) {
-                terrainVertices[i][3] = 0.0f;
-                terrainVertices[i][4] = 0.5f;
+                terrainVertices[i][3] = 1.5f;
+                terrainVertices[i][4] = 1.5f;
+                terrainVertices[i][5] = 1.5f;
+                terrainVertices[i][6] = 0.0f;
+                terrainVertices[i][7] = 0.5f;
                 //terrainVertices[i][5] = 0.0f;
             }
             //terrainVertices[i][3] = float(x)/RENDER_DISTANCE;
@@ -216,10 +225,10 @@ void ProcGen::generateTextures() {
         for (int x = 0; x < RENDER_DISTANCE; x++)
         {
             if (x % 2 != 0) {
-                terrainVertices[i][4] += 0.5f;
+                terrainVertices[i][7] += 0.5f;
             }
             if (y %2 != 0) {
-                terrainVertices[i][3] += 0.5f;
+                terrainVertices[i][6] += 0.5f;
             }
             i++;
         }
@@ -307,12 +316,16 @@ void ProcGen::bind() {
 
     //Allocation & indexing of vertex attribute memory for vertex shader
     //Positions
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    //Textures
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    //Colours
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    //Textures
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     //Textures to generate
     glGenTextures(NumBuffers, Buffers);
