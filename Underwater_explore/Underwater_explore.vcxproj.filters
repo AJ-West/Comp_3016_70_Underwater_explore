@@ -16,6 +16,9 @@
     <Filter Include="Source Files\dependent files">
       <UniqueIdentifier>{0d79d04e-5bfc-4410-b150-040102f3ed3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\dependent files\shaders">
+      <UniqueIdentifier>{f7e36bea-3a04-4ab0-90c6-4363431dc56f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Underwater_explore.cpp">
@@ -65,10 +68,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragmentShader.frag">
-      <Filter>Source Files\dependent files</Filter>
+      <Filter>Source Files\dependent files\shaders</Filter>
     </None>
     <None Include="vertexShader.vert">
-      <Filter>Source Files\dependent files</Filter>
+      <Filter>Source Files\dependent files\shaders</Filter>
+    </None>
+    <None Include="modelFragmentShader.frag">
+      <Filter>Source Files\dependent files\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

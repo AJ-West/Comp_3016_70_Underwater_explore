@@ -94,6 +94,7 @@ int main()
     //Loading of shaders
     Shader Shaders("vertexShader.vert", "fragmentShader.frag");
     Shaders.use();
+    Shader modelShaders("vertexShader.vert", "modelFragmentShader.frag");
 
     //Sets the viewport size within the window to match the window size of 1280x720
     glViewport(0, 0, 1280, 720);
@@ -174,7 +175,7 @@ int main()
         map->draw();
         // the collectables should be continuously rotating
         SetMatrices(Shaders);
-        
+        modelShaders.use();
         for (auto collect : collectables) {
             float time = (float)glfwGetTime();
             vec3 center = collect->getCentrePoint();
@@ -191,10 +192,11 @@ int main()
             model2 = translate(model2, vec3(0.0f, sin(time), 0.0f));
             
             mvp = projection * view * model2; //Setting of MVP
-            Shaders.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
+            modelShaders.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
             //model2 = translate(model, -collect->getCentrePoint());
-            collect->draw(Shaders);   
+            collect->draw(modelShaders);
         } 
+        Shaders.use();
         //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         SetMatrices(Shaders);
         //Refreshing
