@@ -6,13 +6,13 @@
 
 #include "FastNoiseLite.h"
 
-#include "collectable.h"
-
 #include "variables.h"
 
 #include "stb_image.h"
 
 using namespace std;
+
+class Collectable;
 
 class ProcGen {
 public:

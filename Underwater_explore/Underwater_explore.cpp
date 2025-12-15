@@ -17,7 +17,7 @@
 
 //LEARNOPENGL
 #include <learnopengl/shader_m.h>
-#include <learnopengl/model.h>
+//#include <learnopengl/model.h>
 
 #include "variables.h"
 
@@ -25,6 +25,8 @@
 
 #include "proceduralGeneration.h"
 #include "collectable.h"
+
+#include "Player.h"
 
 using namespace glm;
 using namespace std;
@@ -176,19 +178,22 @@ int main()
         for (auto collect : collectables) {
             float time = (float)glfwGetTime();
             vec3 center = collect->getCentrePoint();
+            float scaleFactor = 0.1f;
             //cout << "x " << center.x << '\n';
             //cout << "y " << center.y << '\n';
             //cout << "z " << center.z << '\n';
             model2 = mat4(1.0f);
-            model2 = translate(model2, center);
+            
+            model2 = scale(model, vec3(scaleFactor, scaleFactor, scaleFactor));
+            model2 = translate(model2, center/ scaleFactor);
             model2 = rotate(model2, time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
-            model2 = translate(model2, vec3(-center.x, 0.0f, -center.z));
-            model2 = translate(model2, vec3(0.0f, sin(time)/10, 0.0f));
+            //model2 = translate(model2, vec3(-center.x, 0.0f, -center.z));
+            model2 = translate(model2, vec3(0.0f, sin(time), 0.0f));
+            
             mvp = projection * view * model2; //Setting of MVP
             Shaders.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
             //model2 = translate(model, -collect->getCentrePoint());
-            collect->draw();   
-            model2 = translate(model2, vec3(0.0f, -sin(time)/10, 0.0f));
+            collect->draw(Shaders);   
         } 
         //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         SetMatrices(Shaders);

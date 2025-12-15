@@ -8,6 +8,9 @@
 
 #include "stb_image.h"
 
+class Model;
+class Shader;
+
 using namespace std;
 using namespace glm;
 
@@ -17,7 +20,7 @@ public:
 	~Collectable();
 
 	void bind();
-    void draw();
+    void draw(Shader& shaders);
 
     //getters
     vec3 getCentrePoint() { return centrePoint + vec3(size/2,size/2,size/2); }
@@ -42,6 +45,8 @@ private:
     };
 
     vec3 centrePoint;
+
+    Model* bottle;
 
     //VAO vertex attribute positions in correspondence to vertex attribute type
     enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };

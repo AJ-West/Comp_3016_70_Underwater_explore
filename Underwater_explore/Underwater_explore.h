@@ -3,7 +3,8 @@
 //framebuffer_size_callback() needs GlFW, so include moved here
 #include <GLFW/glfw3.h>
 
-#include "Player.h"
+class Player;
+class Shader;
 
 //Called on window resize
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

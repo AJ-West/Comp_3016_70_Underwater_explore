@@ -1,4 +1,6 @@
 #include "proceduralGeneration.h"
+#include "collectable.h"
+
 
 ProcGen::ProcGen(){}
 ProcGen::~ProcGen(){}
