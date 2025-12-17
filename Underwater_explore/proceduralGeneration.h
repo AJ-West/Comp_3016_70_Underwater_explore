@@ -13,6 +13,7 @@
 using namespace std;
 
 class Collectable;
+class Plant;
 
 class ProcGen {
 public:
@@ -39,6 +40,9 @@ public:
 
     void draw();
 
+    //getters
+    vector<Plant*> getPlants() { return plants; }
+
 private:
     //Assigning perlin noise type for map
     FastNoiseLite TerrainNoise;
@@ -49,6 +53,8 @@ private:
 
     //Generation of height map vertices
     GLfloat terrainVertices[MAP_SIZE][8];
+
+    vector<Plant*> plants;
 
     //VAO vertex attribute positions in correspondence to vertex attribute type
     enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };

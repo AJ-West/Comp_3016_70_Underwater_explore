@@ -1,6 +1,6 @@
 #include "proceduralGeneration.h"
+#include "plant.h"
 #include "collectable.h"
-
 
 ProcGen::ProcGen(){}
 ProcGen::~ProcGen(){}
@@ -91,6 +91,9 @@ void ProcGen::biomeGeneration() {
 }*/
 
 void ProcGen::biomeGeneration() {
+    //for plant drawing
+    float columnVerticesOffset = 0.0f;
+    float rowVerticesOffset = 0.0f;
     //Terrain vertice index
     int i = 0;
     //Using x & y nested for loop in order to apply noise 2-dimensionally
@@ -98,6 +101,21 @@ void ProcGen::biomeGeneration() {
     {
         for (int x = 0; x < RENDER_DISTANCE; x++)
         {
+            //Setting of height from 2D noise value at respective x & y coordinate
+            float noiseVal = TerrainNoise.GetNoise((float)x, (float)y);
+            if (noiseVal >= 0.4) {
+                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 10;
+            }
+            else if (noiseVal >= 0.25) {
+                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 7.5;
+            }
+            else if (noiseVal >= 0) {
+                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 5;
+            }
+            else {
+                terrainVertices[i][1] = -TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y);
+            }
+
             //Retrieval of biome to set
             float biomeValue = BiomeNoise.GetNoise((float)x, (float)y);
 
@@ -118,22 +136,11 @@ void ProcGen::biomeGeneration() {
                 terrainVertices[i][6] = 0.5f;
                 terrainVertices[i][7] = 0.0f;
                 //terrainVertices[i][5] = 0.5f;
+                if (rand() % 200 == 1) {
+                    plants.emplace_back(new Plant(vec3(columnVerticesOffset, terrainVertices[i][1], rowVerticesOffset), rand()% 10));
+                }
             }
 
-            //Setting of height from 2D noise value at respective x & y coordinate
-            float noiseVal = TerrainNoise.GetNoise((float)x, (float)y);
-            if (noiseVal >= 0.4) {
-                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 10;
-            }
-            else if (noiseVal >= 0.25) {
-                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 7.5;
-            }
-            else if (noiseVal >= 0) {
-                terrainVertices[i][1] = TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y) * 5;
-            }
-            else {
-                terrainVertices[i][1] = -TerrainNoise.GetNoise((float)x, (float)y) * TerrainNoise.GetNoise((float)x, (float)y);
-            }
             if (terrainVertices[i][1] <= -0.25) {
                 terrainVertices[i][3] = 1.5f;
                 terrainVertices[i][4] = 1.5f;
@@ -146,7 +153,10 @@ void ProcGen::biomeGeneration() {
             //terrainVertices[i][4] = float(y) / RENDER_DISTANCE;
 
             i++;
+            columnVerticesOffset = columnVerticesOffset + chunkSize;
         }
+        rowVerticesOffset = rowVerticesOffset + chunkSize;
+        columnVerticesOffset = 0.0f;
     }
 }
 

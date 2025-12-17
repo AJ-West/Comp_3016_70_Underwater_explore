@@ -1,6 +1,7 @@
 #include "collectable.h"
 //LEARNOPENGL
 #include <learnopengl/model.h>
+
 Collectable::Collectable(vec3 position): centrePoint(position){
     vertices[0] = centrePoint.x + 0.0f;
     vertices[1] = centrePoint.y + 0.0f;

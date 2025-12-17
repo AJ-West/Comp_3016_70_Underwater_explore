@@ -27,6 +27,7 @@
 #include "collectable.h"
 
 #include "Player.h"
+#include "plant.h"
 
 using namespace glm;
 using namespace std;
@@ -64,7 +65,7 @@ mat4 projection;
 
 int main()
 {
-    //system("pause");
+    system("pause");
     //Initialisation of GLFW
     glfwInit();
     //Initialisation of 'GLFWwindow' object
@@ -115,6 +116,8 @@ int main()
     }
 
     player = new Player();    
+
+    vector<Plant*> plants = map->getPlants();
 
     //Determines if first entry of mouse into window
     bool mouseFirstEntry = true;
@@ -196,6 +199,26 @@ int main()
             //model2 = translate(model, -collect->getCentrePoint());
             collect->draw(modelShaders);
         } 
+
+        for (auto plant : plants) {
+            float time = (float)glfwGetTime();
+            vec3 center = plant->getCentrePoint();
+            float scaleFactor = 0.1f;
+            //cout << "x " << center.x << '\n';
+            //cout << "y " << center.y << '\n';
+            //cout << "z " << center.z << '\n';
+            model2 = mat4(1.0f);
+
+            model2 = scale(model, vec3(scaleFactor, scaleFactor, scaleFactor));
+            model2 = translate(model2, center / scaleFactor);
+            //model2 = translate(model2, vec3(-center.x, 0.0f, -center.z));
+
+            mvp = projection * view * model2; //Setting of MVP
+            modelShaders.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
+            //model2 = translate(model, -collect->getCentrePoint());
+            plant->draw(modelShaders, model2, mvp, projection, view);
+        }
+
         Shaders.use();
         //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         SetMatrices(Shaders);

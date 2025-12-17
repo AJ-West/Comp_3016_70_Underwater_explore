@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="collectable.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="plant.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="proceduralGeneration.cpp" />
     <ClCompile Include="stbImageLoader.cpp" />
@@ -148,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="collectable.h" />
     <ClInclude Include="FastNoiseLite.h" />
+    <ClInclude Include="plant.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="proceduralGeneration.h" />
     <ClInclude Include="stb_image.h" />
