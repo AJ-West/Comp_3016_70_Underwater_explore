@@ -63,9 +63,15 @@ mat4 model;
 mat4 view;
 mat4 projection;
 
+void SetMatrices(Shader& ShaderProgramIn, mat4& Model)
+{
+    mvp = projection * view * Model; //Setting of MVP
+    ShaderProgramIn.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
+}
+
 int main()
 {
-    system("pause");
+    //system("pause");
     //Initialisation of GLFW
     glfwInit();
     //Initialisation of 'GLFWwindow' object
@@ -106,22 +112,27 @@ int main()
     //Sets the mouse_callback() function as the callback for the mouse movement event
     glfwSetCursorPosCallback(window, mouse_callback);
 
+    // Create map
     ProcGen* map = new ProcGen();
 
     map->procTerrainGen();
 
+    //get list of plants from the map
+    vector<Plant*> plants = map->getPlants();
+
+    //get collectables
     vector<Collectable*> collectables = map->generateCollectables();
     for (auto collect : collectables) {
         collect->bind();
     }
 
+    //create player
     player = new Player();    
-
-    vector<Plant*> plants = map->getPlants();
 
     //Determines if first entry of mouse into window
     bool mouseFirstEntry = true;
     
+    //Terrain
     //Model matrix
     model = mat4(1.0f);
     //Scaling to zoom in
@@ -132,14 +143,25 @@ int main()
     //model = translate(model, vec3(0.0f, -2.f, -1.5f));
     model = translate(model, vec3(0.0f, 0.0f, 0.0f));
 
-    mat4 model2 = mat4(1.0f);
+    //Collectables
+    mat4 CModel = mat4(1.0f);
     //Scaling to zoom in
-    model2 = scale(model, vec3(1.0f, 1.0f, 1.0f));
+    CModel = scale(CModel, vec3(0.1f, 0.1f, 0.1f));
     //Rotation to look down
-    model2 = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    CModel = rotate(CModel, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
     //Movement to position further back
     //model = translate(model, vec3(0.0f, -2.f, -1.5f));
-    model2 = translate(model, vec3(0.0f, 0.0f, 0.0f));
+    CModel = translate(CModel, vec3(0.0f, 0.0f, 0.0f));
+
+    //Plants
+    mat4 PModel = mat4(1.0f);
+    //Scaling to zoom in
+    PModel = scale(PModel, vec3(0.1f, 0.1f, 0.1f));
+    //Rotation to look down
+    PModel = rotate(PModel, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    //Movement to position further back
+    //model = translate(model, vec3(0.0f, -2.f, -1.5f));
+    PModel = translate(PModel, vec3(0.0f, 0.0f, 0.0f));
 
     //Projection matrix
     projection = perspective(radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
@@ -172,56 +194,48 @@ int main()
         //Transformations & Drawing
         //Viewer orientation
         view = lookAt(player->getCameraPosition(), player->getCameraPosition() + player->getCameraFront(), player->getCameraUp()); //Sets the position of the viewer, the movement direction in relation to it & the world up direction
-        SetMatrices(Shaders);
+        SetMatrices(Shaders, model);
 
         //Drawing
         map->draw();
         // the collectables should be continuously rotating
-        SetMatrices(Shaders);
+        SetMatrices(Shaders, model);
         modelShaders.use();
         for (auto collect : collectables) {
             float time = (float)glfwGetTime();
             vec3 center = collect->getCentrePoint();
-            float scaleFactor = 0.1f;
-            //cout << "x " << center.x << '\n';
-            //cout << "y " << center.y << '\n';
-            //cout << "z " << center.z << '\n';
-            model2 = mat4(1.0f);
+                        
+            // adjust when and how to draw the model
+            CModel = translate(CModel, center * 10.0f); // x10 due to model scale
+            CModel = rotate(CModel, time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+            CModel = translate(CModel, vec3(0.0f, sin(time), 0.0f));
             
-            model2 = scale(model, vec3(scaleFactor, scaleFactor, scaleFactor));
-            model2 = translate(model2, center/ scaleFactor);
-            model2 = rotate(model2, time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
-            //model2 = translate(model2, vec3(-center.x, 0.0f, -center.z));
-            model2 = translate(model2, vec3(0.0f, sin(time), 0.0f));
-            
-            mvp = projection * view * model2; //Setting of MVP
-            modelShaders.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
-            //model2 = translate(model, -collect->getCentrePoint());
+            SetMatrices(Shaders, CModel);
             collect->draw(modelShaders);
+            
+            // return to origin with default values
+            CModel = translate(CModel, vec3(0.0f, -sin(time), 0.0f));            
+            CModel = rotate(CModel, -time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+            CModel = translate(CModel, -center * 10.0f); // x10 due to model scale
         } 
 
         for (auto plant : plants) {
             float time = (float)glfwGetTime();
             vec3 center = plant->getCentrePoint();
-            float scaleFactor = 0.1f;
-            //cout << "x " << center.x << '\n';
-            //cout << "y " << center.y << '\n';
-            //cout << "z " << center.z << '\n';
-            model2 = mat4(1.0f);
 
-            model2 = scale(model, vec3(scaleFactor, scaleFactor, scaleFactor));
-            model2 = translate(model2, center / scaleFactor);
-            //model2 = translate(model2, vec3(-center.x, 0.0f, -center.z));
+            //Shift to location of plant
+            PModel = translate(PModel, center*10.0f); // x10 to counteract scale of model
 
-            mvp = projection * view * model2; //Setting of MVP
-            modelShaders.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
-            //model2 = translate(model, -collect->getCentrePoint());
-            plant->draw(modelShaders, model2, mvp, projection, view);
+            SetMatrices(Shaders, PModel);
+            plant->draw(modelShaders, PModel, mvp, projection, view);
+
+            //return to origin
+            PModel = translate(PModel, -center * 10.0f);
         }
 
         Shaders.use();
         //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-        SetMatrices(Shaders);
+        SetMatrices(Shaders, model);
         //Refreshing
         glfwSwapBuffers(window); //Swaps the colour buffer
         glfwPollEvents(); //Queries all GLFW events
@@ -295,10 +309,4 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     direction.y = sin(radians(cameraPitch));
     direction.z = sin(radians(cameraYaw)) * cos(radians(cameraPitch));
     player->setCameraFront(normalize(direction));
-}
-
-void SetMatrices(Shader& ShaderProgramIn)
-{
-    mvp = projection * view * model; //Setting of MVP
-    ShaderProgramIn.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
 }

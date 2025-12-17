@@ -13,6 +13,3 @@ void ProcessUserInput(GLFWwindow* WindowIn, Player* player);
 
 //Called on mouse movement
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-
-//Sets the model-view-projection matrix
-void SetMatrices(Shader& ShaderProgramIn);
