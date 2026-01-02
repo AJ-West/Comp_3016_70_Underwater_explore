@@ -29,8 +29,11 @@
 #include "Player.h"
 #include "plant.h"
 
+#include "irrklang/irrKlang.h"
+
 using namespace glm;
 using namespace std;
+using namespace irrklang;
 
 //Window
 int windowWidth = 1280;
@@ -71,7 +74,7 @@ void SetMatrices(Shader& ShaderProgramIn, mat4& Model)
 
 int main()
 {
-    //system("pause");
+    system("pause");
     //Initialisation of GLFW
     glfwInit();
     //Initialisation of 'GLFWwindow' object
@@ -166,6 +169,14 @@ int main()
     //Projection matrix
     projection = perspective(radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
       
+    ISoundEngine* music = createIrrKlangDevice();
+    if (!music) {
+        std::cerr << "Failed to load irrKlang DLL or initialize sound engine." << std::endl;
+        return 0;
+    }
+    music->play2D("Sound/music.wav", true); // looped playback
+    music->setSoundVolume(0.15f);
+
     //Game loop
     while (glfwWindowShouldClose(window) == false)
     {
@@ -178,8 +189,14 @@ int main()
         ProcessUserInput(window, player); //Takes user input
 
         //collision checks
-        for (auto collect : collectables) {
-            player->checkCollision(collect);
+        for (auto& collect : collectables) {
+            if (collect != nullptr) {
+                if(player->checkCollision(collect)){
+                    delete collect;
+                    collect = nullptr;
+                }
+            }
+            cout << "temp";
         }
         
         //Rendering
@@ -202,21 +219,23 @@ int main()
         SetMatrices(Shaders, model);
         modelShaders.use();
         for (auto collect : collectables) {
-            float time = (float)glfwGetTime();
-            vec3 center = collect->getCentrePoint();
-                        
-            // adjust when and how to draw the model
-            CModel = translate(CModel, center * 10.0f); // x10 due to model scale
-            CModel = rotate(CModel, time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
-            CModel = translate(CModel, vec3(0.0f, sin(time), 0.0f));
-            
-            SetMatrices(Shaders, CModel);
-            collect->draw(modelShaders);
-            
-            // return to origin with default values
-            CModel = translate(CModel, vec3(0.0f, -sin(time), 0.0f));            
-            CModel = rotate(CModel, -time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
-            CModel = translate(CModel, -center * 10.0f); // x10 due to model scale
+            if (collect != nullptr) {
+                float time = (float)glfwGetTime();
+                vec3 center = collect->getCentrePoint();
+
+                // adjust when and how to draw the model
+                CModel = translate(CModel, center * 10.0f); // x10 due to model scale
+                CModel = rotate(CModel, time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+                CModel = translate(CModel, vec3(0.0f, sin(time), 0.0f));
+
+                SetMatrices(Shaders, CModel);
+                collect->draw(modelShaders);
+
+                // return to origin with default values
+                CModel = translate(CModel, vec3(0.0f, -sin(time), 0.0f));
+                CModel = rotate(CModel, -time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+                CModel = translate(CModel, -center * 10.0f); // x10 due to model scale
+            }
         } 
 
         for (auto plant : plants) {

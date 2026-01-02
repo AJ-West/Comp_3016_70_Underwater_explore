@@ -11,8 +11,11 @@
 
 #include "variables.h"
 
+#include "irrklang/irrKlang.h"
+
 using namespace glm;
 using namespace std;
+using namespace irrklang;
 
 class Player {
 public:
@@ -21,7 +24,7 @@ public:
 
 	void handleInput(GLFWwindow* WindowIn);
 
-	void checkCollision(Collectable* collet);
+	bool checkCollision(Collectable* collet);
 
 	//getters
 	vec3 getCameraPosition() { return cameraPosition; }
@@ -42,4 +45,5 @@ private:
 	//Up position within world space
 	vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);
 
+	ISoundEngine* soundEffects;
 };

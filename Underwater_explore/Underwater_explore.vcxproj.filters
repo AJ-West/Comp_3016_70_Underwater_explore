@@ -19,6 +19,9 @@
     <Filter Include="Source Files\dependent files\shaders">
       <UniqueIdentifier>{f7e36bea-3a04-4ab0-90c6-4363431dc56f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Irrklang">
+      <UniqueIdentifier>{edeec95a-cdf9-47c3-8039-6918fda56c55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Underwater_explore.cpp">

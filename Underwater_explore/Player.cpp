@@ -1,6 +1,13 @@
 #include "Player.h"
 
-Player::Player(){}
+Player::Player(){
+    soundEffects = createIrrKlangDevice();
+    if (!soundEffects) {
+        std::cerr << "Failed to load irrKlang DLL or initialize sound engine." << std::endl;
+        return;
+    }
+    soundEffects->setSoundVolume(0.5f);
+}
 
 Player::~Player(){}
 
@@ -30,7 +37,7 @@ void Player::handleInput(GLFWwindow* WindowIn) {
     }
 }
 
-void Player::checkCollision(Collectable* collect) {
+bool Player::checkCollision(Collectable* collect) {
     vec3 tCentre = collect->getCentrePoint();
     float tSize = collect->getSize();
 
@@ -38,6 +45,9 @@ void Player::checkCollision(Collectable* collect) {
     float mag = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
 
     if (mag <= tSize) {
-        cout << "colliding" << '\n';
+        soundEffects->play2D("Sound/pickup.mp3");
     }
+
+
+    return mag <= tSize;
 }
