@@ -185,6 +185,10 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        vec3 cameraPos = player->getCameraPosition();
+        Shaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
+        modelShaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
+
         //Input
         ProcessUserInput(window, player); //Takes user input
 
@@ -196,11 +200,10 @@ int main()
                     collect = nullptr;
                 }
             }
-            cout << "temp";
         }
         
         //Rendering
-        glClearColor(0.25f, 0.0f, 1.0f, 1.0f); //Colour to display on cleared window
+        glClearColor(cameraPos[1] / 5, cameraPos[1] / 5, 0.05f+ cameraPos[1] / 5*2, 1.0f); //Colour to display on cleared window
         glClear(GL_COLOR_BUFFER_BIT); //Clears the colour buffer
         glClear(GL_DEPTH_BUFFER_BIT); //Might need
 
@@ -255,6 +258,7 @@ int main()
         Shaders.use();
         //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         SetMatrices(Shaders, model);
+
         //Refreshing
         glfwSwapBuffers(window); //Swaps the colour buffer
         glfwPollEvents(); //Queries all GLFW events

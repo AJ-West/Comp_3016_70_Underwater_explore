@@ -9,8 +9,11 @@ layout (location = 2) in vec2 textureVertex;
 //Model-View-Projection Matrix
 uniform mat4 mvpIn;
 
+uniform vec3 lightColour;
+
 //Colour to send
 out vec3 colourFrag;
+out vec3 lightCol;
 
 //Texture to send
 out vec2 textureFrag;
@@ -21,6 +24,7 @@ void main()
     gl_Position = mvpIn * vec4(position.x, position.y, position.z, 1.0);
     //Sending colour coordinates to next stage
     colourFrag = colourVertex;
+    lightCol = lightColour;
     //Sending texture coordinates to next stage
     textureFrag = textureVertex;
 }

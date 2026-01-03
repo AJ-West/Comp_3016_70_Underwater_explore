@@ -4,6 +4,7 @@ out vec4 FragColor;
 
 //Colour coordinates from last stage
 in vec3 colourFrag;
+in vec3 lightCol;
 
 //Texture coordinates from last stage
 in vec2 textureFrag;
@@ -13,7 +14,7 @@ uniform sampler2D texture_diffuse1;
 void main()
 {
     //Setting of colour coordinates to colour map
-    vec4 colour = vec4(colourFrag, 1.0f);
+    vec4 colour = vec4(colourFrag*lightCol, 1.0f);
 
     //Setting of colour coordinates to colour map
     FragColor = texture(texture_diffuse1, textureFrag) * colour;

@@ -141,10 +141,10 @@ void ProcGen::biomeGeneration() {
                 }
             }
 
-            if (terrainVertices[i][1] <= -0.25) {
-                terrainVertices[i][3] = 1.5f;
-                terrainVertices[i][4] = 1.5f;
-                terrainVertices[i][5] = 1.5f;
+            if (terrainVertices[i][1] <= -0.25) { // lava
+                terrainVertices[i][3] = 3.0f;
+                terrainVertices[i][4] = 3.0f;
+                terrainVertices[i][5] = 3.0f;
                 terrainVertices[i][6] = 0.0f;
                 terrainVertices[i][7] = 0.5f;
                 //terrainVertices[i][5] = 0.0f;
