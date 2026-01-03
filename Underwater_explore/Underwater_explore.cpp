@@ -19,6 +19,11 @@
 #include <learnopengl/shader_m.h>
 //#include <learnopengl/model.h>
 
+//ImGUI
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+
 #include "variables.h"
 
 #include "Underwater_explore.h"
@@ -66,10 +71,30 @@ mat4 model;
 mat4 view;
 mat4 projection;
 
+static int score = 0;
+
 void SetMatrices(Shader& ShaderProgramIn, mat4& Model)
 {
     mvp = projection * view * Model; //Setting of MVP
     ShaderProgramIn.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
+}
+
+//creates ImGui
+ImGuiIO& init_ImGui_environment(GLFWwindow* window) {
+    // Initialize ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    // Setup ImGui style
+    ImGui::StyleColorsDark();
+
+    // Initialize ImGui for GLFW and OpenGL
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+
+    return io;
 }
 
 int main()
@@ -114,6 +139,8 @@ int main()
 
     //Sets the mouse_callback() function as the callback for the mouse movement event
     glfwSetCursorPosCallback(window, mouse_callback);
+
+    init_ImGui_environment(window);
 
     // Create map
     ProcGen* map = new ProcGen();
@@ -198,6 +225,7 @@ int main()
                 if(player->checkCollision(collect)){
                     delete collect;
                     collect = nullptr;
+                    score += 1;
                 }
             }
         }
@@ -258,6 +286,20 @@ int main()
         Shaders.use();
         //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         SetMatrices(Shaders, model);
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Appearing);
+        ImGui::SetNextWindowSize(ImVec2(windowWidth, 100), ImGuiCond_Appearing);
+        // Create a simple ImGui window
+        ImGui::Begin("Transparent Window", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar);
+        ImGui::Text("Bottles Collected: %d", score);
+        ImGui::End();
+        //ImGui::ShowDemoWindow();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         //Refreshing
         glfwSwapBuffers(window); //Swaps the colour buffer
