@@ -34,6 +34,8 @@ public:
 
     void generateTextures();
 
+    void generateNormals();
+
     vector<Collectable*> generateCollectables();
 
     void bind();
@@ -52,7 +54,7 @@ private:
     GLuint terrainIndices[trianglesGrid][3];
 
     //Generation of height map vertices
-    GLfloat terrainVertices[MAP_SIZE][8];
+    GLfloat terrainVertices[MAP_SIZE][11];
 
     vector<Plant*> plants;
 

@@ -5,6 +5,8 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 colourVertex;
 //Texture coordinates from last stage
 layout (location = 2) in vec2 textureVertex;
+// Normals
+layout (location = 3) in vec3 normal;
 
 //Model-View-Projection Matrix
 uniform mat4 mvpIn;
@@ -13,18 +15,28 @@ uniform vec3 lightColour;
 
 //Colour to send
 out vec3 colourFrag;
-out vec3 lightCol;
 
 //Texture to send
 out vec2 textureFrag;
 
+//Normal to send
+out vec3 normalFrag;
+
+//position to send
+out vec3 crntPosFrag;
+
+
+
 void main()
 {
     //Transformation applied to vertices
-    gl_Position = mvpIn * vec4(position.x, position.y, position.z, 1.0);
+    crntPosFrag = vec3(mvpIn * vec4(position, 1.0));
+    // Outputs the positions/coordinates of all vertices
+	gl_Position = mvpIn * vec4(crntPosFrag, 1.0);
     //Sending colour coordinates to next stage
     colourFrag = colourVertex;
-    lightCol = lightColour;
     //Sending texture coordinates to next stage
     textureFrag = textureVertex;
+    //Sending normal to next stage
+    normalFrag = normal;
 }

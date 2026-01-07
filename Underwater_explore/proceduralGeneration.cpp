@@ -33,10 +33,13 @@ void ProcGen::procTerrainGen() {
 
     //generate the vertices for the map
     generateVertices();
+
     // generates the indicies for the map chuncks
     generateChunks();
 
     generateTextures();
+
+    generateNormals();
 
     bind();
 }
@@ -247,6 +250,46 @@ void ProcGen::generateTextures() {
     }
 }
 
+void ProcGen::generateNormals() { // AI assist for logic of face normal and calculation
+    //Initialise all normals to zero
+    for (int i = 0; i < MAP_SIZE; i++)
+    {
+        terrainVertices[i][8] = 0.0f;
+        terrainVertices[i][9] = 0.0f;
+        terrainVertices[i][10] = 0.0f;
+    }
+
+    for (int i = 0; i < trianglesGrid; i++)
+    {
+        GLuint index0 = terrainIndices[i][0];         
+        GLuint index1 = terrainIndices[i][1];         
+        GLuint index2 = terrainIndices[i][2];         
+
+        vec3 pos0 = vec3(terrainVertices[index0][0], terrainVertices[index0][1], terrainVertices[index0][2]);
+        vec3 pos1 = vec3(terrainVertices[index1][0], terrainVertices[index1][1], terrainVertices[index1][2]);
+        vec3 pos2 = vec3(terrainVertices[index2][0], terrainVertices[index2][1], terrainVertices[index2][2]);
+
+        vec3 edge1 = pos1 - pos0;
+        vec3 edge2 = pos2 - pos0;
+
+        //Face normal
+        vec3 triangleNormal = normalize(cross(edge1, edge2));
+
+        //Adding face normal to each vertex gives smooth shading
+        terrainVertices[index0][8] = triangleNormal.x;
+        terrainVertices[index0][9] = triangleNormal.y;
+        terrainVertices[index0][10] = triangleNormal.z;
+
+        terrainVertices[index1][8] = triangleNormal.x;
+        terrainVertices[index1][9] = triangleNormal.y;
+        terrainVertices[index1][10] = triangleNormal.z;
+
+        terrainVertices[index2][8] = triangleNormal.x;
+        terrainVertices[index2][9] = triangleNormal.y;
+        terrainVertices[index2][10] = triangleNormal.z;
+    }
+}
+
 vector<Collectable*> ProcGen::generateCollectables() {
     vector<Collectable*> collectables;
     for (int i = 0; i <= 5; i++) {
@@ -328,15 +371,19 @@ void ProcGen::bind() {
 
     //Allocation & indexing of vertex attribute memory for vertex shader
     //Positions
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //Colours
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     //Textures
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    //Normal
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
     //Textures to generate

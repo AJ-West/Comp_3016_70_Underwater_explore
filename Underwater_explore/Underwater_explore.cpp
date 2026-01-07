@@ -127,10 +127,8 @@ int main()
     }
 
     //Loading of shaders
-    Shader Shaders("vertexShader.vert", "fragmentShader.frag");
+    Shader Shaders("vertexShader.vert", "modelFragmentShader.frag");
     Shaders.use();
-    Shader modelShaders("vertexShader.vert", "modelFragmentShader.frag");
-
     //Sets the viewport size within the window to match the window size of 1280x720
     glViewport(0, 0, 1280, 720);
 
@@ -214,7 +212,8 @@ int main()
 
         vec3 cameraPos = player->getCameraPosition();
         Shaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
-        modelShaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
+        Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
+        Shaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
 
         //Input
         ProcessUserInput(window, player); //Takes user input
@@ -248,7 +247,7 @@ int main()
         map->draw();
         // the collectables should be continuously rotating
         SetMatrices(Shaders, model);
-        modelShaders.use();
+        Shaders.use();
         for (auto collect : collectables) {
             if (collect != nullptr) {
                 float time = (float)glfwGetTime();
@@ -260,7 +259,7 @@ int main()
                 CModel = translate(CModel, vec3(0.0f, sin(time), 0.0f));
 
                 SetMatrices(Shaders, CModel);
-                collect->draw(modelShaders);
+                collect->draw(Shaders);
 
                 // return to origin with default values
                 CModel = translate(CModel, vec3(0.0f, -sin(time), 0.0f));
@@ -277,7 +276,7 @@ int main()
             PModel = translate(PModel, center*10.0f); // x10 to counteract scale of model
 
             SetMatrices(Shaders, PModel);
-            plant->draw(modelShaders, PModel, mvp, projection, view);
+            plant->draw(Shaders, PModel, mvp, projection, view);
 
             //return to origin
             PModel = translate(PModel, -center * 10.0f);
