@@ -17,7 +17,7 @@ uniform sampler2D texture_diffuse1;
 //get number of lights
 uniform float lightNum;
 // get list of all light colours (size of maximum number of light sources)
-uniform vec4 lightColors[2];
+uniform vec4 lightColors[500];
 // get list of all light positions
 uniform vec3 lightPositions[500];
 // Gets the color of the light from the main function
@@ -54,7 +54,7 @@ void main()
     for(int i = 1; i<lightNum; i++){
         // diffuse lighting
 	    normal = normalize(normalFrag);
-        lightDirection = normalize(lightPositions[0] - crntPosFrag);
+        lightDirection = normalize(lightPositions[i] - crntPosFrag);
         halfwayDirection = normalize(lightDirection + viewDirection);
 	    diffuse += max(dot(normal, halfwayDirection), 0.0f);
 
@@ -67,7 +67,7 @@ void main()
         distance = length(lightPositions[i] - crntPosFrag);
         attenuation = 1.0 / (1.0 + 0.09 * distance + 0.064 * distance * distance);
 
-        lighting += lightColors[1]*attenuation;
+        lighting += lightColors[i]*attenuation;
     }
 
     // ambient lighting

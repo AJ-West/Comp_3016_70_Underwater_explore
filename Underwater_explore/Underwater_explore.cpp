@@ -183,23 +183,24 @@ int main()
         //player light colours
         0.75f, 0.25f, 0.25f, 1.0f,
         // lava colour
-        1.0f, 1.0f, 1.0f, 1.0f
+        1.0f, 1.0f, 0.0f, 1.0f
     };
     vector<GLfloat> lightPositions;
     //player light colours
-    lightColours.emplace_back(player->getCameraPosition()[0]);
-    lightColours.emplace_back(player->getCameraPosition()[1]);
-    lightColours.emplace_back(player->getCameraPosition()[2]);
-    for (auto pos : lava) {
-        lightPositions.emplace_back(pos[0] + flareOffset[0]);
-        lightPositions.emplace_back(pos[1] + flareOffset[1]);
-        lightPositions.emplace_back(pos[2] + flareOffset[2]);
+    lightPositions.emplace_back(player->getCameraPosition()[0] + flareOffset[0]);
+    lightPositions.emplace_back(player->getCameraPosition()[1] + flareOffset[1]);
+    lightPositions.emplace_back(player->getCameraPosition()[2] + flareOffset[2]);
+    for (auto i = 0; i < lava.size(); i++) {
+        cout << "x: " << lava[i].x << "y: " << lava[i].y << "z: " << lava[i].z <<"\n";
+        lightPositions.emplace_back(lava[i].x);
+        lightPositions.emplace_back(lava[i].y);
+        lightPositions.emplace_back(lava[i].z);
     }
     //Shaders.setVec4("lightColors", lightColours);
     glUniform4fv(glGetUniformLocation(Shaders.ID, "lightColors"), 2, lightColours.data());
     //Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
     //Shaders.setVec3("lightPos", 0, 0, 0);
-    glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), lava.size() + 1, lightPositions.data());
+    glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), (lava.size() + 1)*3, lightPositions.data());
 
     //Determines if first entry of mouse into window
     bool mouseFirstEntry = true;
