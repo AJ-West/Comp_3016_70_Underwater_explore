@@ -39,7 +39,7 @@ void ProcGen::procTerrainGen() {
 
     generateTextures();
 
-    generateNormals();
+    //generateNormals();
 
     bind();
 }
@@ -384,7 +384,7 @@ void ProcGen::bind() {
 
     //Normal
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
 
     //Textures to generate
     glGenTextures(NumBuffers, Buffers);

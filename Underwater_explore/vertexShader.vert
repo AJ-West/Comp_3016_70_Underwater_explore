@@ -14,8 +14,6 @@ uniform mat4 model;
 uniform mat4 camera;
 uniform mat4 mvpIn;
 
-uniform vec3 lightColour;
-
 //Colour to send
 out vec3 colourFrag;
 
@@ -27,8 +25,6 @@ out vec3 normalFrag;
 
 //position to send
 out vec3 crntPosFrag;
-
-
 
 void main()
 {

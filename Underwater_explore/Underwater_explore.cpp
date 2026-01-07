@@ -213,8 +213,10 @@ int main()
         lastFrame = currentFrame;
 
         vec3 cameraPos = player->getCameraPosition();
-        Shaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
-        Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
+        //Shaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
+        Shaders.setVec4("lightColor", 0.25f,0.25f,0.25f,1.0f);
+        //Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
+        Shaders.setVec3("lightPos", 0.5f,0.5f,0.5f);
         Shaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
 
         //Input

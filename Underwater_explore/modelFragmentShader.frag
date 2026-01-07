@@ -38,5 +38,25 @@ void main()
 	float specular = specAmount * specularLight;
 
     //Setting of colour coordinates to colour map
-    FragColor = texture(texture_diffuse1, textureFrag) * lightColor;// * (diffuse + ambient + specular);
+    FragColor = texture(texture_diffuse1, textureFrag) * lightColor * (diffuse + ambient + specular);
 }
+/*
+#version 460
+//Colour value to send to next stage
+out vec4 FragColor;
+
+//Texture coordinates from last stage
+in vec2 textureFrag;
+// Gets the color of the light from the main function
+uniform vec4 lightColor;
+
+uniform sampler2D texture_diffuse1;
+
+void main()
+{
+    //Setting of colour coordinates to colour map
+    //vec4 colour = vec4(lightColor,0.05f);// + vec3(0.25f,0.25f,0.25f), 0.05f);
+
+    //Setting of colour coordinates to colour map
+    FragColor = texture(texture_diffuse1, textureFrag)*lightColor;
+}*/
