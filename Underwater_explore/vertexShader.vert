@@ -8,7 +8,10 @@ layout (location = 2) in vec2 textureVertex;
 // Normals
 layout (location = 3) in vec3 normal;
 
-//Model-View-Projection Matrix
+//Model Matrix
+uniform mat4 model;
+//camera Matrix
+uniform mat4 camera;
 uniform mat4 mvpIn;
 
 uniform vec3 lightColour;
@@ -30,9 +33,9 @@ out vec3 crntPosFrag;
 void main()
 {
     //Transformation applied to vertices
-    crntPosFrag = vec3(mvpIn * vec4(position, 1.0));
+    crntPosFrag = vec3(model * vec4(position, 1.0));
     // Outputs the positions/coordinates of all vertices
-	gl_Position = mvpIn * vec4(crntPosFrag, 1.0);
+	gl_Position = camera * vec4(crntPosFrag, 1.0);
     //Sending colour coordinates to next stage
     colourFrag = colourVertex;
     //Sending texture coordinates to next stage

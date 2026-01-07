@@ -76,7 +76,9 @@ static int score = 0;
 void SetMatrices(Shader& ShaderProgramIn, mat4& Model)
 {
     mvp = projection * view * Model; //Setting of MVP
-    ShaderProgramIn.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
+    ShaderProgramIn.setMat4("model", Model);
+    ShaderProgramIn.setMat4("camera", projection * view);
+    //ShaderProgramIn.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
 }
 
 //creates ImGui
