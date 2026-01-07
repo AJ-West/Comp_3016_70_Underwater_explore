@@ -3,7 +3,7 @@
 out vec4 FragColor;
 
 //Colour values from last stage
-in vec3 colourFrag;
+//in vec3 colourFrag;
 //Texture coordinates from last stage
 in vec2 textureFrag;
 //normals from last stage
@@ -37,8 +37,13 @@ void main()
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 8);
 	float specular = specAmount * specularLight;
 
+    float distance = length(lightPos - crntPosFrag);
+    float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.064 * distance * distance);
+
+    vec4 lighting = lightColor*attenuation;
+
     //Setting of colour coordinates to colour map
-    FragColor = texture(texture_diffuse1, textureFrag) * lightColor * (diffuse + ambient + specular);
+    FragColor = texture(texture_diffuse1, textureFrag) * lighting * (diffuse + ambient + specular);
 }
 /*
 #version 460

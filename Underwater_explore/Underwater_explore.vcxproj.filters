@@ -128,6 +128,9 @@
     <ClInclude Include="imgui\backends\imgui_impl_opengl3_loader.h">
       <Filter>Source Files\dependent files\imgui\backends</Filter>
     </ClInclude>
+    <ClInclude Include="flare.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragmentShader.frag">

@@ -33,6 +33,7 @@
 
 #include "Player.h"
 #include "plant.h"
+#include "flare.h"
 
 #include "irrklang/irrKlang.h"
 
@@ -131,6 +132,8 @@ int main()
     //Loading of shaders
     Shader Shaders("vertexShader.vert", "modelFragmentShader.frag");
     Shaders.use();
+    Shader lightShaders("lightShader.vert", "lightShader.frag");
+    
     //Sets the viewport size within the window to match the window size of 1280x720
     glViewport(0, 0, 1280, 720);
 
@@ -157,7 +160,9 @@ int main()
     }
 
     //create player
-    player = new Player();    
+    player = new Player();   
+
+    Flare* flare = new Flare();
 
     //Determines if first entry of mouse into window
     bool mouseFirstEntry = true;
@@ -213,10 +218,19 @@ int main()
         lastFrame = currentFrame;
 
         vec3 cameraPos = player->getCameraPosition();
+        vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+        glm::mat4 lightModel = glm::mat4(1.0f);
+        lightModel = glm::translate(lightModel, lightPos);
+
+        lightShaders.use();
+        lightShaders.setMat4("model", lightModel);
+        lightShaders.setVec4("lightColor", 1.0f, 0.25f, 0.25f, 1.0f);
+        Shaders.use();
         //Shaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
-        Shaders.setVec4("lightColor", 0.25f,0.25f,0.25f,1.0f);
+        Shaders.setVec4("lightColor", 1.0f,0.25f,0.25f,1.0f);
         //Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
-        Shaders.setVec3("lightPos", 0.5f,0.5f,0.5f);
+        //Shaders.setVec3("lightPos", 0, 0, 0);
+        Shaders.setVec3("lightPos", cameraPos[0], cameraPos[1], cameraPos[2]);
         Shaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
 
         //Input
@@ -285,6 +299,12 @@ int main()
             //return to origin
             PModel = translate(PModel, -center * 10.0f);
         }
+
+        lightShaders.use();
+        //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        SetMatrices(lightShaders, lightModel);
+        flare->bind();
+        flare->draw();
 
         Shaders.use();
         //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));

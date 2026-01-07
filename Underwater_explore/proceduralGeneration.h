@@ -54,7 +54,7 @@ private:
     GLuint terrainIndices[trianglesGrid][3];
 
     //Generation of height map vertices
-    GLfloat terrainVertices[MAP_SIZE][11];
+    GLfloat terrainVertices[MAP_SIZE][8];
 
     vector<Plant*> plants;
 

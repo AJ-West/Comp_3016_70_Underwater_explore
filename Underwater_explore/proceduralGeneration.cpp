@@ -124,18 +124,18 @@ void ProcGen::biomeGeneration() {
 
             if (biomeValue <= -0.75f) //Plains
             {
-                terrainVertices[i][3] = 0.5f;
-                terrainVertices[i][4] = 0.5f;
-                terrainVertices[i][5] = 0.5f;
+                //terrainVertices[i][3] = 0.5f;
+                //terrainVertices[i][4] = 0.5f;
+                //terrainVertices[i][5] = 0.5f;
                 terrainVertices[i][6] = 0.0f;
                 terrainVertices[i][7] = 0.0f;
                 //terrainVertices[i][5] = 0.25f;
             }
             else //Murky
             {
-                terrainVertices[i][3] = 0.5f;
-                terrainVertices[i][4] = 0.5f;
-                terrainVertices[i][5] = 0.5f;
+                //terrainVertices[i][3] = 0.5f;
+                //terrainVertices[i][4] = 0.5f;
+                //terrainVertices[i][5] = 0.5f;
                 terrainVertices[i][6] = 0.5f;
                 terrainVertices[i][7] = 0.0f;
                 //terrainVertices[i][5] = 0.5f;
@@ -145,9 +145,9 @@ void ProcGen::biomeGeneration() {
             }
 
             if (terrainVertices[i][1] <= -0.25) { // lava
-                terrainVertices[i][3] = 3.0f;
-                terrainVertices[i][4] = 3.0f;
-                terrainVertices[i][5] = 3.0f;
+                //terrainVertices[i][3] = 3.0f;
+                //terrainVertices[i][4] = 3.0f;
+                //terrainVertices[i][5] = 3.0f;
                 terrainVertices[i][6] = 0.0f;
                 terrainVertices[i][7] = 0.5f;
                 //terrainVertices[i][5] = 0.0f;
@@ -254,9 +254,9 @@ void ProcGen::generateNormals() { // AI assist for logic of face normal and calc
     //Initialise all normals to zero
     for (int i = 0; i < MAP_SIZE; i++)
     {
-        terrainVertices[i][8] = 0.0f;
-        terrainVertices[i][9] = 0.0f;
-        terrainVertices[i][10] = 0.0f;
+        terrainVertices[i][3] = 0.0f;
+        terrainVertices[i][4] = 0.0f;
+        terrainVertices[i][5] = 0.0f;
     }
 
     for (int i = 0; i < trianglesGrid; i++)
@@ -371,20 +371,20 @@ void ProcGen::bind() {
 
     //Allocation & indexing of vertex attribute memory for vertex shader
     //Positions
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    //Colours
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+    //Colours Normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     //Textures
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
     //Normal
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-    glEnableVertexAttribArray(3);
+    //glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+    //glEnableVertexAttribArray(3);
 
     //Textures to generate
     glGenTextures(NumBuffers, Buffers);
