@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <glad/glad.h> 
+#include "glm/ext/vector_float3.hpp"
 
 #include "FastNoiseLite.h"
 
@@ -11,6 +12,7 @@
 #include "stb_image.h"
 
 using namespace std;
+using namespace glm;
 
 class Collectable;
 class Plant;
@@ -44,6 +46,7 @@ public:
 
     //getters
     vector<Plant*> getPlants() { return plants; }
+    vector<vec3> getLava() { return lava; }
 
 private:
     //Assigning perlin noise type for map
@@ -57,6 +60,8 @@ private:
     GLfloat terrainVertices[MAP_SIZE][8];
 
     vector<Plant*> plants;
+
+    vector<vec3> lava;
 
     //VAO vertex attribute positions in correspondence to vertex attribute type
     enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };

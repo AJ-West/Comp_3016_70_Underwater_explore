@@ -150,6 +150,7 @@ void ProcGen::biomeGeneration() {
                 //terrainVertices[i][5] = 3.0f;
                 terrainVertices[i][6] = 0.0f;
                 terrainVertices[i][7] = 0.5f;
+                lava.emplace_back(vec3(terrainVertices[i][0], terrainVertices[i][1], terrainVertices[i][2]));
                 //terrainVertices[i][5] = 0.0f;
             }
             //terrainVertices[i][3] = float(x)/RENDER_DISTANCE;

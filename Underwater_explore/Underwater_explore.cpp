@@ -33,7 +33,6 @@
 
 #include "Player.h"
 #include "plant.h"
-#include "flare.h"
 
 #include "irrklang/irrKlang.h"
 
@@ -66,6 +65,9 @@ mat4 transform;
 //Last value of time change
 float lastFrame = 0.0f;
 
+//flare offset
+vec3 flareOffset(0.5f, 1.0f, 0.5f);
+
 //Model-View-Projection Matrix
 mat4 mvp;
 mat4 model;
@@ -73,6 +75,16 @@ mat4 view;
 mat4 projection;
 
 static int score = 0;
+
+//VAO vertex attribute positions in correspondence to vertex attribute type
+enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };
+//VAOs
+GLuint VAOs[NumVAOs];
+
+//Buffer types
+enum Buffer_IDs { ArrayBuffer, NumBuffers = 4 };
+//Buffer objects
+GLuint Buffers[NumBuffers];
 
 void SetMatrices(Shader& ShaderProgramIn, mat4& Model)
 {
@@ -150,6 +162,8 @@ int main()
 
     map->procTerrainGen();
 
+    vector<vec3> lava = map->getLava();
+
     //get list of plants from the map
     vector<Plant*> plants = map->getPlants();
 
@@ -162,7 +176,30 @@ int main()
     //create player
     player = new Player();   
 
-    Flare* flare = new Flare();
+    Shaders.setInt("lightNum", lava.size() + 1);
+    cout << lava.size() + 1;
+    //ai assisted for how to correctly format the data to pass in
+    vector<GLfloat> lightColours = {
+        //player light colours
+        0.75f, 0.25f, 0.25f, 1.0f,
+        // lava colour
+        1.0f, 1.0f, 1.0f, 1.0f
+    };
+    vector<GLfloat> lightPositions;
+    //player light colours
+    lightColours.emplace_back(player->getCameraPosition()[0]);
+    lightColours.emplace_back(player->getCameraPosition()[1]);
+    lightColours.emplace_back(player->getCameraPosition()[2]);
+    for (auto pos : lava) {
+        lightPositions.emplace_back(pos[0] + flareOffset[0]);
+        lightPositions.emplace_back(pos[1] + flareOffset[1]);
+        lightPositions.emplace_back(pos[2] + flareOffset[2]);
+    }
+    //Shaders.setVec4("lightColors", lightColours);
+    glUniform4fv(glGetUniformLocation(Shaders.ID, "lightColors"), 2, lightColours.data());
+    //Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
+    //Shaders.setVec3("lightPos", 0, 0, 0);
+    glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), lava.size() + 1, lightPositions.data());
 
     //Determines if first entry of mouse into window
     bool mouseFirstEntry = true;
@@ -227,10 +264,14 @@ int main()
         lightShaders.setVec4("lightColor", 1.0f, 0.25f, 0.25f, 1.0f);
         Shaders.use();
         //Shaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
-        Shaders.setVec4("lightColor", 1.0f,0.25f,0.25f,1.0f);
+        //Shaders.setVec4("lightColor", 1.0f,0.25f,0.25f,1.0f);
         //Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
         //Shaders.setVec3("lightPos", 0, 0, 0);
-        Shaders.setVec3("lightPos", cameraPos[0], cameraPos[1], cameraPos[2]);
+        //Shaders.setVec3("lightPos", cameraPos[0], cameraPos[1], cameraPos[2]);
+        lightPositions[0] = cameraPos[0] + flareOffset[0];
+        lightPositions[1] = cameraPos[1] + flareOffset[1];
+        lightPositions[2] = cameraPos[2] + flareOffset[2];
+        glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), lava.size() + 1, lightPositions.data());
         Shaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
 
         //Input
@@ -299,12 +340,6 @@ int main()
             //return to origin
             PModel = translate(PModel, -center * 10.0f);
         }
-
-        lightShaders.use();
-        //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-        SetMatrices(lightShaders, lightModel);
-        flare->bind();
-        flare->draw();
 
         Shaders.use();
         //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
