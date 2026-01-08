@@ -126,27 +126,38 @@ void ProcGen::biomeGeneration() {
             {
                 terrainVertices[i][6] = 0.0f;
                 terrainVertices[i][7] = 0.0f;
+                if (biomeValue <= -0.9f) {
+                    terrainVertices[i][8] = 0.0f;
+                }
+                else {
+                    terrainVertices[i][8] = biomeValue + 1.0f;
+                }
+                
             }
             else //Murky
             {
                 terrainVertices[i][6] = 0.5f;
                 terrainVertices[i][7] = 0.0f;
+                if (biomeValue >= 0.25f) {
+                    terrainVertices[i][8] = 1.0f;
+                }
+                else {
+                    float opacity = biomeValue + 1.25f;
+                    if (opacity >= 1) {
+                        opacity = 1.0f;
+                    }
+                    terrainVertices[i][8] = biomeValue + 1.25f;
+                }
                 if (rand() % 200 == 1) {
                     plants.emplace_back(new Plant(vec3(columnVerticesOffset, terrainVertices[i][1], rowVerticesOffset), rand()% 10));
                 }
             }
 
             if (terrainVertices[i][1] <= -0.25) { // lava
-                //terrainVertices[i][3] = 3.0f;
-                //terrainVertices[i][4] = 3.0f;
-                //terrainVertices[i][5] = 3.0f;
                 terrainVertices[i][6] = 0.0f;
                 terrainVertices[i][7] = 0.5f;
-                //lava.emplace_back(vec3(terrainVertices[i][0], terrainVertices[i][1], terrainVertices[i][2]));
-                //terrainVertices[i][5] = 0.0f;
+                terrainVertices[i][9] = 1.0f; // opaque
             }
-            //terrainVertices[i][3] = float(x)/RENDER_DISTANCE;
-            //terrainVertices[i][4] = float(y) / RENDER_DISTANCE;
 
             i++;
             columnVerticesOffset = columnVerticesOffset + chunkSize;
@@ -236,8 +247,8 @@ void ProcGen::generateTextures() {
     {
         for (int x = 0; x < RENDER_DISTANCE; x++)
         {
-            terrainVertices[i][7] += 0.1f * (x % 6);
-            terrainVertices[i][6] += 0.1f * (y % 6);
+            terrainVertices[i][7] += x % 2;
+            terrainVertices[i][6] += y % 2;
             i++;
         }
     }
@@ -316,16 +327,20 @@ void ProcGen::bind() {
 
     //Allocation & indexing of vertex attribute memory for vertex shader
     //Positions
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //Normal
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     //Textures
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+
+    //Texture opacities
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(8 * sizeof(float)));
+    glEnableVertexAttribArray(3);
 
     //Textures to generate
     glGenTextures(NumBuffers, Buffers);
@@ -334,8 +349,22 @@ void ProcGen::bind() {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
     //Binding texture to type 2D texture
-    glBindTexture(GL_TEXTURE_2D, Buffers[Textures]);
+    glActiveTexture(GL_TEXTURE0);
+    bindTexture("art/plains.png", Texture1);
+
+    //Binding texture to type 2D texture
+    glActiveTexture(GL_TEXTURE1);
+    bindTexture("art/murky.png", Texture2);
+
+    //Binding texture to type 2D texture
+    glActiveTexture(GL_TEXTURE2);
+    bindTexture("art/lava.png", Texture3);
+}
+
+void ProcGen::bindTexture(const char* filename ,int texture) {
+    glBindTexture(GL_TEXTURE_2D, Buffers[texture]);
 
     //Selects x axis (S) of texture bound to GL_TEXTURE_2D & sets to repeat beyond normalised coordinates
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -350,7 +379,7 @@ void ProcGen::bind() {
     //Parameters that will be sent & set based on retrieved texture
     int width, height, colourChannels;
     //Retrieves texture data
-    unsigned char* data = stbi_load("art/environment.png", &width, &height, &colourChannels, 0);
+    unsigned char* data = stbi_load(filename, &width, &height, &colourChannels, 0);
 
     if (data) //If retrieval successful
     {
@@ -371,7 +400,12 @@ void ProcGen::bind() {
 }
 
 void ProcGen::draw() {
-    glBindTexture(GL_TEXTURE_2D, Buffers[Textures]);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, Buffers[Texture1]);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, Buffers[Texture2]);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, Buffers[Texture3]);
     glBindVertexArray(VAOs[0]); //Bind buffer object to render
     glDrawElements(GL_TRIANGLES, MAP_SIZE * 32, GL_UNSIGNED_INT, 0);
 }

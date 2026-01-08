@@ -106,8 +106,8 @@ int main()
     }
 
     //Loading of shaders
+    Shader terrainShaders("vertexShader.vert", "fragmentShader.frag");
     Shader Shaders("vertexShader.vert", "modelFragmentShader.frag");
-    Shaders.use();
     
     //Sets the viewport size within the window to match the window size of 1280x720
     glViewport(0, 0, 1280, 720);
@@ -125,7 +125,7 @@ int main()
 
     map->procTerrainGen();
 
-    vector<vec3> lava = map->getLava();
+    //vector<vec3> lava = map->getLava();
 
     //get list of plants from the map
     vector<Plant*> plants = map->getPlants();
@@ -159,10 +159,18 @@ int main()
     }*/
 
     vec3 cameraPos = player->getCameraPosition();
-
+    Shaders.use();
     Shaders.setVec4("lightColor", flareColour);
     Shaders.setVec3("lightPos", cameraPos[0] + flareOffset[0], cameraPos[1] + flareOffset[1], cameraPos[2] + flareOffset[2]);
     Shaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
+    terrainShaders.use();
+    terrainShaders.setVec4("lightColor", flareColour);
+    terrainShaders.setVec3("lightPos", cameraPos[0] + flareOffset[0], cameraPos[1] + flareOffset[1], cameraPos[2] + flareOffset[2]);
+    terrainShaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
+    terrainShaders.setInt("texture_diffuse1", 0);
+    terrainShaders.setInt("texture_diffuse2", 1);
+    terrainShaders.setInt("texture_diffuse3", 2);
+    Shaders.use();
     //glUniform4fv(glGetUniformLocation(Shaders.ID, "lightColors"), 2, lightColours.data());
     //glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), (lava.size() + 1)*3, lightPositions.data());
 
@@ -223,7 +231,7 @@ int main()
         cameraPos = player->getCameraPosition();
 
         //Input
-        ProcessUserInput(window, player, &Shaders); //Takes user input
+        ProcessUserInput(window, player, &Shaders, &terrainShaders); //Takes user input
 
         //collision checks
         for (auto& collect : collectables) {
@@ -250,11 +258,16 @@ int main()
         //Viewer orientation
         view = lookAt(cameraPos, cameraPos + player->getCameraFront(), player->getCameraUp()); //Sets the position of the viewer, the movement direction in relation to it & the world up direction
         Shaders.setMat4("camera", projection * view);
-        Shaders.setMat4("model", model);
+        //Shaders.setMat4("model", model);
+        terrainShaders.use();
+        terrainShaders.setMat4("camera", projection * view);
+        terrainShaders.setMat4("model", model);
         //SetMatrices(Shaders, model);
 
         //Drawing
         map->draw();
+
+        Shaders.use();
         // the collectables should be continuously rotating
         for (auto collect : collectables) {
             if (collect != nullptr) {
@@ -324,7 +337,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void ProcessUserInput(GLFWwindow* WindowIn, Player* player, Shader* shaders)
+void ProcessUserInput(GLFWwindow* WindowIn, Player* player, Shader* shaders, Shader* terrainShaders)
 {
     //Closes window on 'exit' key press
     if (glfwGetKey(WindowIn, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -332,7 +345,7 @@ void ProcessUserInput(GLFWwindow* WindowIn, Player* player, Shader* shaders)
         glfwSetWindowShouldClose(WindowIn, true);
     }
 
-    player->handleInput(WindowIn, shaders);
+    player->handleInput(WindowIn, shaders, terrainShaders);
 
     
 }

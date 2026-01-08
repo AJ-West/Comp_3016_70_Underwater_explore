@@ -87,7 +87,8 @@ void main()
 
     // decreases light based off distance from light source
     float distance = length(lightPos - crntPosFrag);
-    float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.064 * distance * distance);
+    //float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.064 * distance * distance);
+    float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.016 * distance * distance);
 
     vec4 lighting = lightColor*attenuation;
 

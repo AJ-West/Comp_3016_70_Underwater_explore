@@ -24,11 +24,11 @@ public:
 	Player();
 	~Player();
 
-	void handleInput(GLFWwindow* WindowIn, Shader* shader);
+	void handleInput(GLFWwindow* WindowIn, Shader* shader, Shader* terrainShaders);
 
 	bool checkCollision(Collectable* collet);
 
-	void updateFrag(Shader* shader);
+	void updateFrag(Shader* shader, Shader* terrainShaders);
 
 	//getters
 	vec3 getCameraPosition() { return cameraPosition; }

@@ -7,6 +7,8 @@ layout (location = 0) in vec3 position;
 layout (location = 2) in vec2 textureVertex;
 // Normals
 layout (location = 1) in vec3 normal;
+//textureOpacity
+layout (location = 3) in vec2 opac;
 
 //Model Matrix
 uniform mat4 model;
@@ -25,6 +27,9 @@ out vec3 normalFrag;
 //position to send
 out vec3 crntPosFrag;
 
+//opacity to send
+out vec2 opacity;
+
 void main()
 {
     //Transformation applied to vertices
@@ -37,4 +42,6 @@ void main()
     textureFrag = textureVertex;
     //Sending normal to next stage
     normalFrag = normal;
+    //sending opacity to next stage
+    opacity = opac;
 }

@@ -42,6 +42,8 @@ public:
 
     void bind();
 
+    void bindTexture(const char* filename, int texture);
+
     void draw();
 
     //getters
@@ -57,19 +59,19 @@ private:
     GLuint terrainIndices[trianglesGrid][3];
 
     //Generation of height map vertices
-    GLfloat terrainVertices[MAP_SIZE][8];
+    GLfloat terrainVertices[MAP_SIZE][10];
 
     vector<Plant*> plants;
 
     vector<vec3> lava;
 
     //VAO vertex attribute positions in correspondence to vertex attribute type
-    enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };
+    enum VAO_IDs { Triangles, Indices, Colours, Texture1, Texture2, Texture3, NumVAOs = 2 };
     //VAOs
     GLuint VAOs[NumVAOs];
 
     //Buffer types
-    enum Buffer_IDs { ArrayBuffer, NumBuffers = 4 };
+    enum Buffer_IDs { ArrayBuffer, NumBuffers = 6 };
     //Buffer objects
     GLuint Buffers[NumBuffers];
 };
