@@ -1,13 +1,6 @@
 #include "Player.h"
 
-Player::Player(){
-    soundEffects = createIrrKlangDevice();
-    if (!soundEffects) {
-        std::cerr << "Failed to load irrKlang DLL or initialize sound engine." << std::endl;
-        return;
-    }
-    soundEffects->setSoundVolume(0.5f);
-}
+Player::Player(){}
 
 Player::~Player(){}
 
@@ -42,6 +35,8 @@ void Player::handleInput(GLFWwindow* WindowIn, Shader* shader, Shader* terrainSh
 }
 
 void Player::updateFrag(Shader* shader, Shader* terrainShaders) {
+    //updates shaders for when camera has moved
+    //updates position of the light then the camera
     shader->setVec3("lightPos", cameraPosition[0] + flareOffset[0], cameraPosition[1] + flareOffset[1], cameraPosition[2] + flareOffset[2]);
     //lightPositions[0] = cameraPos[0] + flareOffset[0];
     //lightPositions[1] = cameraPos[1] + flareOffset[1];
@@ -55,6 +50,7 @@ void Player::updateFrag(Shader* shader, Shader* terrainShaders) {
 }
 
 bool Player::checkCollision(Collectable* collect) {
+    //checks for player collision with bottls
     vec3 tCentre = collect->getCentrePoint();
     float tSize = collect->getSize();
 
@@ -64,7 +60,6 @@ bool Player::checkCollision(Collectable* collect) {
     if (mag <= tSize) {
         soundEffects->play2D("Sound/pickup.mp3");
     }
-
 
     return mag <= tSize;
 }

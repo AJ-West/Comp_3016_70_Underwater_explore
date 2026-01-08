@@ -19,6 +19,7 @@ Plant::~Plant() {}
 void Plant::draw(Shader& shaders, mat4 model, mat4 projection, mat4 view) {
     for (int i = 0; i < size; i++) {
         PlantModel->Draw(shaders);
+        //move up draw position for next plant each plant has height value 2
         model = translate(model, vec3(0,2,0));
         shaders.setMat4("model", model);
     }

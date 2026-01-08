@@ -20,7 +20,5 @@ void ProcessUserInput(GLFWwindow* WindowIn, Player* player, Shader* shaders, Sha
 //Called on mouse movement
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
-void SetMatrices(Shader& ShaderProgramIn, glm::mat4& Model);
-
 //creates ImGui
 ImGuiIO& init_ImGui_environment(GLFWwindow* window);

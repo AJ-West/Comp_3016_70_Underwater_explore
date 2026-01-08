@@ -19,7 +19,6 @@ public:
 	Collectable(vec3 pos);
 	~Collectable();
 
-	void bind();
     void draw(Shader& shaders);
 
     //getters
@@ -47,14 +46,4 @@ private:
     vec3 centrePoint;
 
     Model* bottle;
-
-    //VAO vertex attribute positions in correspondence to vertex attribute type
-    enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };
-    //VAOs
-    GLuint VAOs[NumVAOs];
-
-    //Buffer types
-    enum Buffer_IDs { ArrayBuffer, NumBuffers = 4 };
-    //Buffer objects
-    GLuint Buffers[NumBuffers];
 };

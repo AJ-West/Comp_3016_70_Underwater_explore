@@ -37,6 +37,7 @@ public:
 
 	//setters
 	void setCameraFront(vec3 newFront) { cameraFront = newFront; }
+	void setSoundEffects(ISoundEngine* soundEngine) { soundEffects = soundEngine; }
 
 private:
 	float baseSpeed = 2.0f;

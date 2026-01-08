@@ -13,7 +13,6 @@
 
 //LEARNOPENGL
 #include <learnopengl/shader_m.h>
-//#include <learnopengl/model.h>
 
 //ImGUI
 #include "imgui/imgui.h"
@@ -54,16 +53,13 @@ bool mouseFirstEntry = true;
 float cameraLastXPos = 800.0f / 2.0f;
 float cameraLastYPos = 600.0f / 2.0f;
 
-//Transformations
-mat4 transform;
-
 //Time
 //Last value of time change
 float lastFrame = 0.0f;
 
 //Flare
-//vec4 flareColour(1.0f, 0.25f, 0.25f, 1.0f);
-vec4 flareColour(1.0f, 1.0f, 1.0f, 1.0f);
+vec4 flareColour(1.0f, 0.25f, 0.25f, 1.0f);
+//vec4 flareColour(1.0f, 1.0f, 1.0f, 1.0f);
 vec3 flareOffset(0.5f, 1.0f, 0.5f);
 
 //Model-View-Projection Matrix
@@ -75,9 +71,8 @@ static int score = 0;
 
 int main()
 {
-    system("pause");
-
-    srand(static_cast<unsigned int>(time(0))); // Seed with current time
+    //Set seed based of time
+    srand(static_cast<unsigned int>(time(0)));
 
     //Initialisation of GLFW
     glfwInit();
@@ -132,9 +127,6 @@ int main()
 
     //get collectables
     vector<Collectable*> collectables = map->generateCollectables();
-    for (auto collect : collectables) {
-        collect->bind();
-    }
 
     //create player
     player = new Player();   
@@ -185,7 +177,6 @@ int main()
     //Rotation to look down
     model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
     //Movement to position further back
-    //model = translate(model, vec3(0.0f, -2.f, -1.5f));
     model = translate(model, vec3(0.0f, 0.0f, 0.0f));
 
     //Collectables
@@ -217,6 +208,7 @@ int main()
     }
     music->play2D("Sound/music.wav", true); // looped playback
     music->setSoundVolume(0.15f);
+    player->setSoundEffects(music);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -248,7 +240,7 @@ int main()
         glClearColor(cameraPos[1] / 10, cameraPos[1] / 10, 0.05f+ cameraPos[1] / 10*2, 1.0f); //Colour to display on cleared window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clears the colour and depth buffer
 
-        //glEnable(GL_CULL_FACE); //Discards all back-facing triangles
+        //Discards all back-facing triangles
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CW);
@@ -258,11 +250,9 @@ int main()
         //Viewer orientation
         view = lookAt(cameraPos, cameraPos + player->getCameraFront(), player->getCameraUp()); //Sets the position of the viewer, the movement direction in relation to it & the world up direction
         Shaders.setMat4("camera", projection * view);
-        //Shaders.setMat4("model", model);
         terrainShaders.use();
         terrainShaders.setMat4("camera", projection * view);
         terrainShaders.setMat4("model", model);
-        //SetMatrices(Shaders, model);
 
         //Drawing
         map->draw();
@@ -282,7 +272,7 @@ int main()
                 mod = translate(mod, vec3(0.0f, sin(time), 0.0f));
 
                 Shaders.setMat4("model", mod);
-                //SetMatrices(Shaders, CModel);
+
                 collect->draw(Shaders);
             }
         } 
@@ -308,12 +298,7 @@ int main()
         // Create ImGui window
         ImGui::Begin("Transparent Window", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar);
         ImGui::Text("Bottles Collected: %d", score);
-        ImGui::End();
-
-        ImGui::SetNextWindowPos(ImVec2(windowWidth-60, 0), ImGuiCond_Appearing);
-        ImGui::SetNextWindowSize(ImVec2(windowWidth, 100), ImGuiCond_Appearing);
-        // Create ImGui window
-        ImGui::Begin("Signature", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar);
+        ImGui::SetNextWindowPos(ImVec2(windowWidth - 60, 0), ImGuiCond_Appearing);
         ImGui::Text("AJ West");
         ImGui::End();
 
@@ -345,9 +330,7 @@ void ProcessUserInput(GLFWwindow* WindowIn, Player* player, Shader* shaders, Sha
         glfwSetWindowShouldClose(WindowIn, true);
     }
 
-    player->handleInput(WindowIn, shaders, terrainShaders);
-
-    
+    player->handleInput(WindowIn, shaders, terrainShaders);    
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -393,12 +376,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     direction.y = sin(radians(cameraPitch));
     direction.z = sin(radians(cameraYaw)) * cos(radians(cameraPitch));
     player->setCameraFront(normalize(direction));
-}
-
-void SetMatrices(Shader& ShaderProgramIn, mat4& Model)
-{
-    ShaderProgramIn.setMat4("model", Model);
-    ShaderProgramIn.setMat4("camera", projection * view);
 }
 
 //creates ImGui

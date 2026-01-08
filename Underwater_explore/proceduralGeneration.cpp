@@ -37,8 +37,10 @@ void ProcGen::procTerrainGen() {
     // generates the indicies for the map chuncks
     generateChunks();
 
+    //generates textures for biomes
     generateTextures();
 
+    //generate normals of vertices
     generateNormals();
 
     bind();
@@ -148,7 +150,7 @@ void ProcGen::biomeGeneration() {
                     }
                     terrainVertices[i][8] = biomeValue + 1.25f;
                 }
-                if (rand() % 200 == 1) {
+                if (rand() % 100 == 1 && !(terrainVertices[i][1] <= -0.25)) {
                     plants.emplace_back(new Plant(vec3(columnVerticesOffset, terrainVertices[i][1], rowVerticesOffset), rand()% 10));
                 }
             }
@@ -240,13 +242,12 @@ void ProcGen::generateChunks() {
 }
 
 void ProcGen::generateTextures() {
-    //Terrain vertice index
     int i = 0;
-    //Using x & y nested for loop in order to apply noise 2-dimensionally
     for (int y = 0; y < RENDER_DISTANCE; y++)
     {
         for (int x = 0; x < RENDER_DISTANCE; x++)
         {
+            //Whether left or right, top or bottom of texture
             terrainVertices[i][7] += x % 2;
             terrainVertices[i][6] += y % 2;
             i++;
@@ -263,6 +264,7 @@ void ProcGen::generateNormals() { // AI assist for logic of face normal and calc
         terrainVertices[i][5] = 0.0f;
     }
 
+    // Goes through each triangle and calculates the face normal assigning it to each point
     for (int i = 0; i < trianglesGrid; i++)
     {
         GLuint index0 = terrainIndices[i][0];         
@@ -295,6 +297,7 @@ void ProcGen::generateNormals() { // AI assist for logic of face normal and calc
 }
 
 vector<Collectable*> ProcGen::generateCollectables() {
+    //create random locations for all collectables to spawn
     vector<Collectable*> collectables;
     for (int i = 0; i <= 5; i++) {
         // find location not on the outer cells
