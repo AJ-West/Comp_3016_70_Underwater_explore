@@ -58,8 +58,8 @@ float cameraLastYPos = 600.0f / 2.0f;
 float lastFrame = 0.0f;
 
 //Flare
-//vec4 flareColour(1.0f, 0.25f, 0.25f, 1.0f);
-vec4 flareColour(1.0f, 1.0f, 1.0f, 1.0f);
+vec4 flareColour(1.0f, 0.25f, 0.25f, 1.0f);
+//vec4 flareColour(1.0f, 1.0f, 1.0f, 1.0f);
 vec3 flareOffset(0.5f, 1.0f, 0.5f);
 
 //Model-View-Projection Matrix

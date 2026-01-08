@@ -33,19 +33,20 @@ void main()
     // diffuse lighting
 	vec3 normal = normalize(normalFrag);
 	vec3 lightDirection = normalize(lightPos - crntPosFrag);
-	float diffuse = max(dot(normal, lightDirection), 0.0f);
+    vec3 viewDirection = normalize(camPos - crntPosFrag);
+    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
+	float diffuse = max(dot(normal, halfwayDirection), 0.0f);
 
     // specular lighting
 	float specularLight = 0.50f;
-	vec3 viewDirection = normalize(camPos - crntPosFrag);
-	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 8);
+	vec3 reflectionDirection = reflect(-halfwayDirection, normal);
+	float specAmount = pow(max(dot(normal, halfwayDirection), 0.0f), 8);
 	float specular = specAmount * specularLight;
 
     // decreases light based off distance from light source
     float distance = length(lightPos - crntPosFrag);
-    //float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.064 * distance * distance);
-    float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.016 * distance * distance);
+    float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.064 * distance * distance);
+    //float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.016 * distance * distance);
 
     vec4 lighting = lightColor*attenuation;
 

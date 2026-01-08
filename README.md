@@ -5,7 +5,7 @@ This repository contains my prototype for a scene using OpenGL. My scene is a si
 
 ## Youtube link
 
-Link - [text](https://youtu.be/XUpcIOjW7bA)
+Link - https://youtu.be/TXZereqWp_4
 
 ## How to run the executable/ build solution
 
@@ -28,8 +28,6 @@ To build the project from the repository you need to clone all folders and then 
 11. Evaluation: achievements and lessons learned
 12. Next steps and improvement suggestions
 
----
-
 ## Dependencies used
 The dependencies used were:
 - OpenGL for rendering of the project.
@@ -49,6 +47,10 @@ External runtime / build libraries (declared in project):
 - Dear ImGui (UI)
 - FastNoiseLite (procedural noise)
 
+All models and textures I made myself however the sound effects I got from:
+Music from - https://jdsherbert.itch.io/ambiences-music-pack?download
+Sound effect from - https://www.epidemicsound.com/?utm_source=microsoft&utm_medium=paidsearchbrand&utm_campaign=SEM%7CGBR%7Cen%7Cen%7CBrand&utm_term=epidemic%20sound&msclkid=aa175cdb84921de103b035bbb5a2acd6&utm_content=brand_name
+
 ## Gameplay description
 There is minimal gameplay due to the focus being on creating a scene rather than a game. The user can move around the scene using WASD for forward, left, back and right respectively. Due to being 3D the direction rotates with where the camera is pointing. To move the camera to pan around the scene you move the mouse in the direction you wish to pan towards. The objective is to move around the scene and collect 5 bottles that are littering the ocean. The ocean bed and location of the bottles is procedurally generated each time the scene is ran. There is plants that spawn in the world which vary in height generated in the terrain generation. These plants can only spawn in the 'murky' biome. There are 3 biomes plains, murky and lava. Plains and murky are generated through a biome noise while lava is generated at a certain depth. Both plants and bottles are models which are imported using assimp. The bottle moves up and down and rotates based off time being my timed-animations.
 
@@ -58,6 +60,8 @@ There is a dynamic light source that moves with the player and uses blingPhong r
 Throughout my code I comment on where AI was used. I used it to help with the logic behind calculating the normal of vertices in procedural terrain (proceduralGeneration.cpp generateNormals()). I was having issues linking dependencies correctly for plant.h/.cpp so AI assisted in resolving this issue. Finally ai was used to help create an outline of the README for me to add to and edit. 
 
 Ai was beeing used to help me implementing light sources across the lava sources. I created the initial logic and code but when it repeatedly wasn't working I used AI to try and help fix but even then I failed to resolve this. I mention further on this in my video.
+
+Finally AI was used in an attempt to generate unit tests. However the unit tests were unsuccessful (could not be ran) but I kept them in to show them.
 
 ## Game programming patterns used
 I did not use any advanced Game programming patterns such as Object pooling. This is due to the scale of the project being very small as well as no clear places to add it. I considered object pooling for either the plants or bottles but couldn't see the benefit considering they are spawned once and only bottles are interactable. There is only 5 max bottles so felt would be overkill. This does not mean I did not follow proper programming techniques such as OOP which is used.
@@ -102,19 +106,24 @@ Bottle with white light
 Bottle texture
 
 
-
-
 ## Exception handling and test cases
-Current state (observed):
-- Limited explicit exception handling in main loop. Typical C++ patterns used (return codes, console messages). Example: GLAD init failure prints message in [Underwater_explore.cpp](Underwater_explore.cpp).
-- Dear ImGui contains internal debug/assert checks (see [imgui/imgui.cpp](imgui/imgui.cpp)), useful during development.
-- No dedicated unit tests detected in repository.
 
-Recommendations:
-- Add guards and return-value checks for asset loading (Assimp model loads, texture loads via `stbi_load`) in [plant.cpp](plant.cpp) and model/loader code.
-- Wrap critical initialization with try/catch and log to console; e.g., for GLFW/GLAD/Assimp initialization in [Underwater_explore.cpp](Underwater_explore.cpp).
-- Introduce small automated tests for deterministic parts (e.g., noise output range tests using [FastNoiseLite.h](FastNoiseLite.h)).
-- Add runtime checks for file existence for assets referenced in code (models, shaders).
+I attempted to add unit tests similarlly to how they were handled in my 30% coursework. This was via testing AI generated unit tests. However unlike last time I could not get them to work for my project. With more time I would ensure these were working but have left the failed unit tests in so they can still be seen. Most potential fixes I could find resolved around dependencies outside the allowed scope so decided not to pursue. I did still however complete user testing (with user consent) gaining the below feedback
+
+Positives
+- Ran smoothly
+- Enjoyed the lighting from the 'flare' and how it affected the environment
+- appreciated the effort of background (skybox) changing based off y axis
+- Notice the subtle sound when collecting a bottle
+- Procedural generation was good especially the smooth transitions from flat to mountains
+
+Negatives
+- Confused about what the objective was
+- UI not dynamic to screen size
+- Would of liked a more satisfying sound upon collecting a bottle
+- Wanted a lightsource coming from the lava
+
+To improve user testing in the future I will give them the wider context of the project and module specs. This is because most feedback was to do with it not being a complete game which is outside the project scope. I do however wish I had made it clearer what the user was meant to do (collect bottles) as even a scene needs clarity.
 
 ## Further details: how the prototype works - AI generated only as I feel it it covers the outline of what I describe earlier and in my video
 - Startup sequence in [Underwater_explore.cpp](Underwater_explore.cpp):
@@ -125,6 +134,8 @@ Recommendations:
 - UI/Debug: ImGui demo windows are included (see [imgui/imgui_demo.cpp](imgui/imgui_demo.cpp)) for control and diagnostics.
 
 ## Evaluation — achievements & hindsight
+Although I did try to follow my project proposal after alot of trying and tutorial following on model animation I couldn't add the player's arms like I intended. I changed this advanced feature to include BlingPhong lighting.
+
 What was achieved:
 - working scene in OpenGL only using approved depencies which includes
   - procedural terrain generation
@@ -142,3 +153,10 @@ What I'd do differently:
 - Add more game mechanics to make it feels like more of a game rather than just a scene
 - Add an entity chasing you in the water most likely
 - Improve resource management and explicit error handling around asset loads.
+
+What I want to add if work on project continued
+- light source from lava
+- lava bubbles
+- clear game objective
+- working unit tests
+- player model animation
