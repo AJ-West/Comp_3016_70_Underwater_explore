@@ -6,10 +6,6 @@
 //GLAD
 #include <glad/glad.h>
 
-//GLM
-#include "glm/ext/vector_float3.hpp"
-#include <glm/gtc/type_ptr.hpp> //Access to the value_ptr
-
 //ASSIMP
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -36,7 +32,7 @@
 
 #include "irrklang/irrKlang.h"
 
-using namespace glm;
+//using namespace glm;
 using namespace std;
 using namespace irrklang;
 
@@ -65,52 +61,17 @@ mat4 transform;
 //Last value of time change
 float lastFrame = 0.0f;
 
-//flare offset
+//Flare
+//vec4 flareColour(1.0f, 0.25f, 0.25f, 1.0f);
+vec4 flareColour(1.0f, 1.0f, 1.0f, 1.0f);
 vec3 flareOffset(0.5f, 1.0f, 0.5f);
 
 //Model-View-Projection Matrix
-mat4 mvp;
 mat4 model;
 mat4 view;
 mat4 projection;
 
 static int score = 0;
-
-//VAO vertex attribute positions in correspondence to vertex attribute type
-enum VAO_IDs { Triangles, Indices, Colours, Textures, NumVAOs = 2 };
-//VAOs
-GLuint VAOs[NumVAOs];
-
-//Buffer types
-enum Buffer_IDs { ArrayBuffer, NumBuffers = 4 };
-//Buffer objects
-GLuint Buffers[NumBuffers];
-
-void SetMatrices(Shader& ShaderProgramIn, mat4& Model)
-{
-    mvp = projection * view * Model; //Setting of MVP
-    ShaderProgramIn.setMat4("model", Model);
-    ShaderProgramIn.setMat4("camera", projection * view);
-    //ShaderProgramIn.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
-}
-
-//creates ImGui
-ImGuiIO& init_ImGui_environment(GLFWwindow* window) {
-    // Initialize ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-
-    // Setup ImGui style
-    ImGui::StyleColorsDark();
-
-    // Initialize ImGui for GLFW and OpenGL
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init();
-
-    return io;
-}
 
 int main()
 {
@@ -144,7 +105,6 @@ int main()
     //Loading of shaders
     Shader Shaders("vertexShader.vert", "modelFragmentShader.frag");
     Shaders.use();
-    Shader lightShaders("lightShader.vert", "lightShader.frag");
     
     //Sets the viewport size within the window to match the window size of 1280x720
     glViewport(0, 0, 1280, 720);
@@ -176,8 +136,7 @@ int main()
     //create player
     player = new Player();   
 
-    Shaders.setInt("lightNum", lava.size() + 1);
-    cout << lava.size() + 1;
+    /*Shaders.setInt("lightNum", lava.size() + 1);
     //ai assisted for how to correctly format the data to pass in
     vector<GLfloat> lightColours = {
         //player light colours
@@ -191,16 +150,17 @@ int main()
     lightPositions.emplace_back(player->getCameraPosition()[1] + flareOffset[1]);
     lightPositions.emplace_back(player->getCameraPosition()[2] + flareOffset[2]);
     for (auto i = 0; i < lava.size(); i++) {
-        cout << "x: " << lava[i].x << "y: " << lava[i].y << "z: " << lava[i].z <<"\n";
         lightPositions.emplace_back(lava[i].x);
         lightPositions.emplace_back(lava[i].y);
         lightPositions.emplace_back(lava[i].z);
-    }
-    //Shaders.setVec4("lightColors", lightColours);
-    glUniform4fv(glGetUniformLocation(Shaders.ID, "lightColors"), 2, lightColours.data());
-    //Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
-    //Shaders.setVec3("lightPos", 0, 0, 0);
-    glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), (lava.size() + 1)*3, lightPositions.data());
+    }*/
+
+    vec3 cameraPos = player->getCameraPosition();
+
+    Shaders.setVec4("lightColor", flareColour);
+    Shaders.setVec3("lightPos", cameraPos[0] + flareOffset[0], cameraPos[1] + flareOffset[1], cameraPos[2] + flareOffset[2]);
+    //glUniform4fv(glGetUniformLocation(Shaders.ID, "lightColors"), 2, lightColours.data());
+    //glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), (lava.size() + 1)*3, lightPositions.data());
 
     //Determines if first entry of mouse into window
     bool mouseFirstEntry = true;
@@ -255,24 +215,14 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        vec3 cameraPos = player->getCameraPosition();
-        vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
-        glm::mat4 lightModel = glm::mat4(1.0f);
-        lightModel = glm::translate(lightModel, lightPos);
+        cameraPos = player->getCameraPosition();
 
-        lightShaders.use();
-        lightShaders.setMat4("model", lightModel);
-        lightShaders.setVec4("lightColor", 1.0f, 0.25f, 0.25f, 1.0f);
         Shaders.use();
-        //Shaders.setVec3("lightColour", cameraPos[1]/5, cameraPos[1]/5, cameraPos[1]/5);
-        //Shaders.setVec4("lightColor", 1.0f,0.25f,0.25f,1.0f);
-        //Shaders.setVec3("lightPos", 0.0f,0.0f,0.0f);
-        //Shaders.setVec3("lightPos", 0, 0, 0);
-        //Shaders.setVec3("lightPos", cameraPos[0], cameraPos[1], cameraPos[2]);
-        lightPositions[0] = cameraPos[0] + flareOffset[0];
-        lightPositions[1] = cameraPos[1] + flareOffset[1];
-        lightPositions[2] = cameraPos[2] + flareOffset[2];
-        glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), lava.size() + 1, lightPositions.data());
+        Shaders.setVec3("lightPos", cameraPos[0] +flareOffset[0], cameraPos[1] + flareOffset[1], cameraPos[2] + flareOffset[2]);
+        //lightPositions[0] = cameraPos[0] + flareOffset[0];
+        //lightPositions[1] = cameraPos[1] + flareOffset[1];
+        //lightPositions[2] = cameraPos[2] + flareOffset[2];
+        //glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), lava.size() + 1, lightPositions.data());
         Shaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
 
         //Input
@@ -336,7 +286,7 @@ int main()
             PModel = translate(PModel, center*10.0f); // x10 to counteract scale of model
 
             SetMatrices(Shaders, PModel);
-            plant->draw(Shaders, PModel, mvp, projection, view);
+            plant->draw(Shaders, PModel, projection, view);
 
             //return to origin
             PModel = translate(PModel, -center * 10.0f);
@@ -351,11 +301,17 @@ int main()
         ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Appearing);
         ImGui::SetNextWindowSize(ImVec2(windowWidth, 100), ImGuiCond_Appearing);
-        // Create a simple ImGui window
+        // Create ImGui window
         ImGui::Begin("Transparent Window", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar);
         ImGui::Text("Bottles Collected: %d", score);
         ImGui::End();
-        //ImGui::ShowDemoWindow();
+
+        ImGui::SetNextWindowPos(ImVec2(windowWidth-60, 0), ImGuiCond_Appearing);
+        ImGui::SetNextWindowSize(ImVec2(windowWidth, 100), ImGuiCond_Appearing);
+        // Create ImGui window
+        ImGui::Begin("Signature", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar);
+        ImGui::Text("AJ West");
+        ImGui::End();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -433,4 +389,28 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     direction.y = sin(radians(cameraPitch));
     direction.z = sin(radians(cameraYaw)) * cos(radians(cameraPitch));
     player->setCameraFront(normalize(direction));
+}
+
+void SetMatrices(Shader& ShaderProgramIn, mat4& Model)
+{
+    ShaderProgramIn.setMat4("model", Model);
+    ShaderProgramIn.setMat4("camera", projection * view);
+}
+
+//creates ImGui
+ImGuiIO& init_ImGui_environment(GLFWwindow* window) {
+    // Initialize ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    // Setup ImGui style
+    ImGui::StyleColorsDark();
+
+    // Initialize ImGui for GLFW and OpenGL
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+
+    return io;
 }

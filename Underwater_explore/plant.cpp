@@ -16,14 +16,10 @@ Plant::Plant(vec3 position, int num) : centrePoint(position), size(num) {
 
 Plant::~Plant() {}
 
-void Plant::draw(Shader& shaders, mat4 model, mat4 mvp, mat4 projection, mat4 view) {
+void Plant::draw(Shader& shaders, mat4 model, mat4 projection, mat4 view) {
     for (int i = 0; i < size; i++) {
         PlantModel->Draw(shaders);
         model = translate(model, vec3(0,2,0));
-        mvp = projection * view * model; //Setting of MVP
-        shaders.setMat4("mvpIn", mvp); //Setting of uniform with Shader class
+        shaders.setMat4("model", model);
     }
-    //glBindTexture(GL_TEXTURE_2D, Buffers[Textures]);
-    //glBindVertexArray(VAOs[0]); //Bind buffer object to render
-    //glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 }

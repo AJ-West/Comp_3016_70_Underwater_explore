@@ -39,7 +39,7 @@ void ProcGen::procTerrainGen() {
 
     generateTextures();
 
-    //generateNormals();
+    generateNormals();
 
     bind();
 }
@@ -281,17 +281,17 @@ void ProcGen::generateNormals() { // AI assist for logic of face normal and calc
         vec3 triangleNormal = normalize(cross(edge1, edge2));
 
         //Adding face normal to each vertex gives smooth shading
-        terrainVertices[index0][8] = triangleNormal.x;
-        terrainVertices[index0][9] = triangleNormal.y;
-        terrainVertices[index0][10] = triangleNormal.z;
+        terrainVertices[index0][3] = triangleNormal.x;
+        terrainVertices[index0][4] = triangleNormal.y;
+        terrainVertices[index0][5] = triangleNormal.z;
 
-        terrainVertices[index1][8] = triangleNormal.x;
-        terrainVertices[index1][9] = triangleNormal.y;
-        terrainVertices[index1][10] = triangleNormal.z;
+        terrainVertices[index1][3] = triangleNormal.x;
+        terrainVertices[index1][4] = triangleNormal.y;
+        terrainVertices[index1][5] = triangleNormal.z;
 
-        terrainVertices[index2][8] = triangleNormal.x;
-        terrainVertices[index2][9] = triangleNormal.y;
-        terrainVertices[index2][10] = triangleNormal.z;
+        terrainVertices[index2][3] = triangleNormal.x;
+        terrainVertices[index2][4] = triangleNormal.y;
+        terrainVertices[index2][5] = triangleNormal.z;
     }
 }
 

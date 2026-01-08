@@ -12,7 +12,6 @@ layout (location = 1) in vec3 normal;
 uniform mat4 model;
 //camera Matrix
 uniform mat4 camera;
-uniform mat4 mvpIn;
 
 //Colour to send
 //out vec3 colourFrag;

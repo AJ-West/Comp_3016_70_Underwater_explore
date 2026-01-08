@@ -19,7 +19,7 @@ public:
     Plant(vec3 pos, int num);
     ~Plant();
 
-    void draw(Shader& shaders, mat4 model, mat4 mvp, mat4 projection, mat4 view);
+    void draw(Shader& shaders, mat4 model, mat4 projection, mat4 view);
 
     vec3 getCentrePoint() { return centrePoint; }
 

@@ -30,7 +30,7 @@ uniform vec3 camPos;
 void main()
 {
     // ambient lighting
-    float ambient = 0.20f;
+    /*float ambient = 0.20f;
 
     // diffuse lighting
 	vec3 normal = normalize(normalFrag);
@@ -68,10 +68,10 @@ void main()
         attenuation = 1.0 / (1.0 + 0.09 * distance + 0.064 * distance * distance);
 
         lighting += lightColors[i]*attenuation;
-    }
+    }*/
 
     // ambient lighting
-    /*float ambient = 0.20f;
+    float ambient = 0.20f;
 
     // diffuse lighting
 	vec3 normal = normalize(normalFrag);
@@ -89,28 +89,8 @@ void main()
     float distance = length(lightPos - crntPosFrag);
     float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.064 * distance * distance);
 
-    vec4 lighting = lightColor*attenuation;*/
+    vec4 lighting = lightColor*attenuation;
 
     //Setting of colour coordinates to colour map
     FragColor = texture(texture_diffuse1, textureFrag) * lighting * (diffuse + ambient + specular);
 }
-/*
-#version 460
-//Colour value to send to next stage
-out vec4 FragColor;
-
-//Texture coordinates from last stage
-in vec2 textureFrag;
-// Gets the color of the light from the main function
-uniform vec4 lightColor;
-
-uniform sampler2D texture_diffuse1;
-
-void main()
-{
-    //Setting of colour coordinates to colour map
-    //vec4 colour = vec4(lightColor,0.05f);// + vec3(0.25f,0.25f,0.25f), 0.05f);
-
-    //Setting of colour coordinates to colour map
-    FragColor = texture(texture_diffuse1, textureFrag)*lightColor;
-}*/
