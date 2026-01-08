@@ -71,25 +71,35 @@ I did not use any advanced Game programming patterns such as Object pooling. Thi
 Player movement is done by updating the camera position based off of user input. Update frag is then called to adjust the shaders appropriately. Update frag updates both camera and light position for the shaders as this updates the flare light source to move it with the player.
 
 handleInput
+<img width="671" height="485" alt="Screenshot 2026-01-08 234118" src="https://github.com/user-attachments/assets/879648e0-8333-42b0-ab13-d924e0cbeb99" />
 
 updateFrag
+<img width="1134" height="242" alt="Screenshot 2026-01-08 234125" src="https://github.com/user-attachments/assets/2c40b254-a38c-42a8-98cd-7f81cbc6616a" />
 
 Collectable and plant are both classes that essentially just render the model. Plant also handles how many plant models are stacked on top of each other. I could of used inheritance for these but that would of actually increased code complexity due to how small these classes are.
 
 Collectable
+<img width="546" height="678" alt="Screenshot 2026-01-08 234152" src="https://github.com/user-attachments/assets/82bd1f6a-b454-4e8e-8c9e-95cc0eede3ec" />
+<img width="501" height="475" alt="Screenshot 2026-01-08 234156" src="https://github.com/user-attachments/assets/bd92e843-ef05-46e2-8b46-92c8b6928102" />
 
 Plant
+<img width="652" height="628" alt="Screenshot 2026-01-08 234202" src="https://github.com/user-attachments/assets/bf8ec7d5-7dc4-4c4e-8946-c89feff019d7" />
+<img width="553" height="392" alt="Screenshot 2026-01-08 234206" src="https://github.com/user-attachments/assets/fededdad-b0e6-4eef-8871-2921ea14db57" />
 
 The modelFragmentShader and fragmentShader are different due to being used for different models. ModelFragmentShader is for imported models while FragmentShader is for the procedural terrain handling texture blending.
 
 modelFragmentShader
+<img width="491" height="604" alt="Screenshot 2026-01-08 234425" src="https://github.com/user-attachments/assets/21f7ac54-73ad-4671-b610-e25066e8cb4e" />
+<img width="656" height="534" alt="Screenshot 2026-01-08 234431" src="https://github.com/user-attachments/assets/3b66cae7-0f65-4fff-a564-348f81d7ddea" />
 
 fragmentShader
+<img width="434" height="653" alt="Screenshot 2026-01-08 234438" src="https://github.com/user-attachments/assets/31e0869d-1374-4139-b76c-a790f43ab179" />
+
 
 ## Sample screens / assets
 No exported screenshots tracked in repo. Assets and models available under:
 
-Terrain with flare light
+Terrain
 
 Terrain plains texture
 
@@ -97,11 +107,11 @@ Terrain murky texture
 
 Terrain lava texture
 
-Plant with white light
+Plant 
 
 Plant textures
 
-Bottle with white light
+Bottle 
 
 Bottle texture
 
