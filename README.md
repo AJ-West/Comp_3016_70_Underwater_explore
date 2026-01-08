@@ -100,20 +100,32 @@ fragmentShader
 No exported screenshots tracked in repo. Assets and models available under:
 
 Terrain
+<img width="1270" height="706" alt="Screenshot 2026-01-08 234657" src="https://github.com/user-attachments/assets/c21a6ce1-23c2-4c76-9769-95c0fd40dd46" />
 
 Terrain plains texture
+<img width="64" height="64" alt="plains" src="https://github.com/user-attachments/assets/980f8f7b-3e55-4474-b677-c16251ead6d1" />
 
 Terrain murky texture
+<img width="64" height="64" alt="murky" src="https://github.com/user-attachments/assets/bfe68d01-0047-4a23-9c57-52cebebfd74b" />
 
 Terrain lava texture
+<img width="64" height="64" alt="lava" src="https://github.com/user-attachments/assets/6fb73740-8e19-4691-a5c2-22650b7adee6" />
 
 Plant 
+<img width="543" height="504" alt="Screenshot 2026-01-08 234713" src="https://github.com/user-attachments/assets/3547068e-ecba-4bcd-94e9-cf8780a07023" />
 
 Plant textures
+Stem
+<img width="64" height="64" alt="stem" src="https://github.com/user-attachments/assets/240d98f1-cdf8-4118-a023-21a68bbf0edb" />
+
+Leaves
+<img width="64" height="64" alt="leaf" src="https://github.com/user-attachments/assets/39959870-e828-4303-94ba-2a463aedec5d" />
 
 Bottle 
+<img width="338" height="359" alt="Screenshot 2026-01-08 234731" src="https://github.com/user-attachments/assets/6e58b80b-42cb-4925-b976-c3169e3d274d" />
 
 Bottle texture
+<img width="64" height="64" alt="bottle" src="https://github.com/user-attachments/assets/61e0ef14-569d-40e0-bdc8-dcee8e805d08" />
 
 
 ## Exception handling and test cases
