@@ -3,6 +3,16 @@
 ## Overview
 This repository contains my prototype for a scene using OpenGL. My scene is a simple underwater exploration demo. To run the exectuable you need to extract the executable zip and double click on the application.exe. 
 
+## Youtube link
+
+Link - [text](https://youtu.be/XUpcIOjW7bA)
+
+## How to run the executable/ build solution
+
+First you need to extract the zip folder titled debug from the respository. Then to run the execuatable open the extracted folder and double click or run the beat dungeon.exe file.
+
+To build the project from the repository you need to clone all folders and then build it in visual studio community 2022 Debug x64. All dependencies should be linked correctly as I used the paths from the lab sessions.
+
 ## README Outline
 
 1. Project concept & short summary
@@ -32,7 +42,7 @@ The dependencies used were:
 - GlSL is used for the vertex and fragment shaders
 
 External runtime / build libraries (declared in project):
-- GLFW, GLAD, GLEW / OpenGL
+- GLFW, GLAD, OpenGL
 - GLM (math)
 - Assimp (model import)
 - irrKlang (audio)
@@ -54,23 +64,45 @@ I did not use any advanced Game programming patterns such as Object pooling. Thi
 
 ## Game mechanics and how they are coded (examples)
 - Movement & camera: handled in `Player` class (see [Player.cpp](Player.cpp) / [Player.h](Player.h)); mouse callbacks registered in [Underwater_explore.cpp](Underwater_explore.cpp).
-- Item collection: `Collectable` objects are placed by `ProcGen`; player proximity checks (likely in game loop) trigger pickup logic—see [collectable.h](collectable.h) and [collectable.cpp](collectable.cpp).
-- Plant rendering: `Plant` constructs a `Model("art/models/plant/plant.obj")` in [plant.cpp](plant.cpp) and draws multiple instances by translating the model matrix.
-- Shaders: lighting and model shading controlled via shader pairs: [lightShader.vert](lightShader.vert), [lightShader.frag](lightShader.frag), and [modelFragmentShader.frag](modelFragmentShader.frag).
+Player movement is done by updating the camera position based off of user input. Update frag is then called to adjust the shaders appropriately. Update frag updates both camera and light position for the shaders as this updates the flare light source to move it with the player.
 
----
+handleInput
 
+updateFrag
 
+Collectable and plant are both classes that essentially just render the model. Plant also handles how many plant models are stacked on top of each other. I could of used inheritance for these but that would of actually increased code complexity due to how small these classes are.
+
+Collectable
+
+Plant
+
+The modelFragmentShader and fragmentShader are different due to being used for different models. ModelFragmentShader is for imported models while FragmentShader is for the procedural terrain handling texture blending.
+
+modelFragmentShader
+
+fragmentShader
 
 ## Sample screens / assets
 No exported screenshots tracked in repo. Assets and models available under:
-- art models: `art/models/plant/plant.obj` (referenced via [plant.cpp](plant.cpp)) and raw Blender sources: `art/models/plant/plant.blend1` and `art/models/bottle/bottle.blend1`
-- sprite/texture sources: `art/*.aseprite` files (binary)
-- Shaders: [vertexShader.vert](vertexShader.vert), [modelFragmentShader.frag](modelFragmentShader.frag)
 
-To capture sample screens: run the executable (build via [Underwater_explore.sln](Underwater_explore.sln)) and take screenshots of the rendered window.
+Terrain with flare light
 
----
+Terrain plains texture
+
+Terrain murky texture
+
+Terrain lava texture
+
+Plant with white light
+
+Plant textures
+
+Bottle with white light
+
+Bottle texture
+
+
+
 
 ## Exception handling and test cases
 Current state (observed):
@@ -84,9 +116,7 @@ Recommendations:
 - Introduce small automated tests for deterministic parts (e.g., noise output range tests using [FastNoiseLite.h](FastNoiseLite.h)).
 - Add runtime checks for file existence for assets referenced in code (models, shaders).
 
----
-
-## Further details: how the prototype works
+## Further details: how the prototype works - AI generated only as I feel it it covers the outline of what I describe earlier and in my video
 - Startup sequence in [Underwater_explore.cpp](Underwater_explore.cpp):
   - Seed RNG, init GLFW, create window, load GLAD, compile shaders (`Shader`), init ImGui, instantiate `ProcGen` and call `procTerrainGen()`.
   - Get returned lists: plants (`map->getPlants()`), lava, collectables (`map->generateCollectables()`), bind collectables, create `Player`.
@@ -94,30 +124,21 @@ Recommendations:
 - Asset loading: Models use Assimp (includes in [Underwater_explore.cpp](Underwater_explore.cpp)); textures through `stb_image.h` and [stbImageLoader.cpp](stbImageLoader.cpp).
 - UI/Debug: ImGui demo windows are included (see [imgui/imgui_demo.cpp](imgui/imgui_demo.cpp)) for control and diagnostics.
 
----
-
 ## Evaluation — achievements & hindsight
 What was achieved:
-- Working prototype with procedural terrain, plant/collectable spawning, model rendering, basic player control and ImGui-based tooling.
-- Integration of several libraries (Assimp, stb_image, FastNoiseLite, irrKlang, Dear ImGui) into a single Visual Studio project.
+- working scene in OpenGL only using approved depencies which includes
+  - procedural terrain generation
+  - model rendering with multiple textures
+  - basic player control to move around the scene
+  - goal of collecting 5 bottles adding small amount of gamification
+  - Music and sound effects
+  - UI showing bottles collected and signature
+  - Vertex and multiple fragment shaders implemented
+  - 3D polygons with timed animations and textures
+  - BlingPhong lighting implemented
 
 What I'd do differently:
-- Replace absolute include/library paths in [Underwater_explore.vcxproj](Underwater_explore.vcxproj) with a portable build (CMake + vcpkg) to improve reproducibility.
-- Stream procedural generation across threads to avoid frame hitches (producer-consumer with a generation worker thread).
-- Export Blender sources to runtime-friendly formats (glTF/OBJ) and use Git LFS or external asset hosting for large binary assets (e.g., `art/models/*.blend1` are Blender binary data).
-- Add unit tests for deterministic components (noise, placement algorithms), and add automated scene sanity checks.
-- Improve resource management (unique_ptr/shared_ptr) and explicit error handling around asset loads.
-
----
-
-## Next steps I can help perform
-- Create a README.md file in repo (this is the content).
-- Add a `.gitignore` for Visual Studio and exclude large binary Blender/aseprite files.
-- Fix `variables.h` macro precedence (example: wrap `MAP_SIZE` with parentheses).
-- Add basic runtime checks for asset loads, or generate a small UML PNG showing class relations.
-
----
-
-If you want, I will:
-- Commit this README to `README.md`, and/or
-- Generate the `.gitignore` and a small UML diagram image and add to repo.
+- Optimise game rendering by splitting terrain rendering down further only using in view chunks
+- Add more game mechanics to make it feels like more of a game rather than just a scene
+- Add an entity chasing you in the water most likely
+- Improve resource management and explicit error handling around asset loads.
