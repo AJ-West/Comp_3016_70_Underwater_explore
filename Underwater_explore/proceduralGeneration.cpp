@@ -1,4 +1,4 @@
-#include "proceduralGeneration.h"
+﻿#include "proceduralGeneration.h"
 #include "plant.h"
 #include "collectable.h"
 
@@ -20,7 +20,7 @@ void ProcGen::createBiomeNoise() {
     BiomeNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
     BiomeNoise.SetFrequency(0.05f);
     int biomeSeed = rand() % 100;
-    TerrainNoise.SetSeed(biomeSeed);
+    BiomeNoise.SetSeed(biomeSeed);
 }
 
 void ProcGen::procTerrainGen() {
@@ -122,23 +122,15 @@ void ProcGen::biomeGeneration() {
             //Retrieval of biome to set
             float biomeValue = BiomeNoise.GetNoise((float)x, (float)y);
 
-            if (biomeValue <= -0.75f) //Plains
+            if (biomeValue <= -0.5f) //Plains
             {
-                //terrainVertices[i][3] = 0.5f;
-                //terrainVertices[i][4] = 0.5f;
-                //terrainVertices[i][5] = 0.5f;
                 terrainVertices[i][6] = 0.0f;
                 terrainVertices[i][7] = 0.0f;
-                //terrainVertices[i][5] = 0.25f;
             }
             else //Murky
             {
-                //terrainVertices[i][3] = 0.5f;
-                //terrainVertices[i][4] = 0.5f;
-                //terrainVertices[i][5] = 0.5f;
                 terrainVertices[i][6] = 0.5f;
                 terrainVertices[i][7] = 0.0f;
-                //terrainVertices[i][5] = 0.5f;
                 if (rand() % 200 == 1) {
                     plants.emplace_back(new Plant(vec3(columnVerticesOffset, terrainVertices[i][1], rowVerticesOffset), rand()% 10));
                 }
@@ -244,12 +236,8 @@ void ProcGen::generateTextures() {
     {
         for (int x = 0; x < RENDER_DISTANCE; x++)
         {
-            if (x % 2 != 0) {
-                terrainVertices[i][7] += 0.5f;
-            }
-            if (y %2 != 0) {
-                terrainVertices[i][6] += 0.5f;
-            }
+            terrainVertices[i][7] += 0.1f * (x % 6);
+            terrainVertices[i][6] += 0.1f * (y % 6);
             i++;
         }
     }
@@ -307,54 +295,6 @@ vector<Collectable*> ProcGen::generateCollectables() {
     }
     return collectables;
 }
-/*
-void ProcGen::bind() {
-    //Sets index of VAO
-    glGenVertexArrays(NumVAOs, VAOs);
-    //Binds VAO to a buffer
-    glBindVertexArray(VAOs[0]);
-    //Sets indexes of all required buffer objects
-    glGenBuffers(NumBuffers, Buffers);
-
-    //Binds vertex object to array buffer
-    glBindBuffer(GL_ARRAY_BUFFER, Buffers[Triangles]);
-    //Allocates buffer memory for the vertices of the 'Triangles' buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(terrainVertices), terrainVertices, GL_STATIC_DRAW);
-
-    //Binding & allocation for indices
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffers[Indices]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(terrainIndices), terrainIndices, GL_STATIC_DRAW);
-
-    //Allocation & indexing of vertex attribute memory for vertex shader
-    //Positions
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    //Colours
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    //Textures to generate
-    glGenTextures(NumBuffers, Buffers);
-
-    //Unbinding
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    //Binding texture to type 2D texture
-    glBindTexture(GL_TEXTURE_2D, Buffers[Textures]);
-
-    //Selects x axis (S) of texture bound to GL_TEXTURE_2D & sets to repeat beyond normalised coordinates
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    //Selects y axis (T) equivalently
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    //Sets to use linear interpolation between adjacent mipmaps
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    //Sets to use linear interpolation upscaling (past largest mipmap texture)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}*/
-
 
 void ProcGen::bind() {
 
@@ -379,17 +319,13 @@ void ProcGen::bind() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    //Colours Normal
+    //Normal
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     //Textures
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
-
-    //Normal
-    //glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-    //glEnableVertexAttribArray(3);
 
     //Textures to generate
     glGenTextures(NumBuffers, Buffers);
@@ -421,8 +357,6 @@ void ProcGen::bind() {
         GLenum format = (colourChannels == 4) ? GL_RGBA : GL_RGB;
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
-        //Generation of texture from retrieved texture data
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         //Automatically generates all required mipmaps on bound texture
         glGenerateMipmap(GL_TEXTURE_2D);
     }

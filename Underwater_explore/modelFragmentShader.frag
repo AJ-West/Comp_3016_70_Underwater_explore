@@ -15,11 +15,11 @@ in vec3 crntPosFrag;
 uniform sampler2D texture_diffuse1;
 
 //get number of lights
-uniform float lightNum;
+//uniform float lightNum;
 // get list of all light colours (size of maximum number of light sources)
-uniform vec4 lightColors[500];
+//uniform vec4 lightColors[500];
 // get list of all light positions
-uniform vec3 lightPositions[500];
+//uniform vec3 lightPositions[500];
 // Gets the color of the light from the main function
 uniform vec4 lightColor;
 // Gets the position of the light from the main function

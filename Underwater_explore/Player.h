@@ -13,6 +13,8 @@
 
 #include "irrklang/irrKlang.h"
 
+#include <learnopengl/shader_m.h>
+
 using namespace glm;
 using namespace std;
 using namespace irrklang;
@@ -22,9 +24,11 @@ public:
 	Player();
 	~Player();
 
-	void handleInput(GLFWwindow* WindowIn);
+	void handleInput(GLFWwindow* WindowIn, Shader* shader);
 
 	bool checkCollision(Collectable* collet);
+
+	void updateFrag(Shader* shader);
 
 	//getters
 	vec3 getCameraPosition() { return cameraPosition; }
@@ -46,4 +50,6 @@ private:
 	vec3 cameraUp = vec3(0.0f, 1.0f, 0.0f);
 
 	ISoundEngine* soundEffects;
+
+	vec3 flareOffset = vec3(0.5f, 1.0f, 0.5f);
 };

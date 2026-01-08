@@ -76,6 +76,9 @@ static int score = 0;
 int main()
 {
     system("pause");
+
+    srand(static_cast<unsigned int>(time(0))); // Seed with current time
+
     //Initialisation of GLFW
     glfwInit();
     //Initialisation of 'GLFWwindow' object
@@ -159,6 +162,7 @@ int main()
 
     Shaders.setVec4("lightColor", flareColour);
     Shaders.setVec3("lightPos", cameraPos[0] + flareOffset[0], cameraPos[1] + flareOffset[1], cameraPos[2] + flareOffset[2]);
+    Shaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
     //glUniform4fv(glGetUniformLocation(Shaders.ID, "lightColors"), 2, lightColours.data());
     //glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), (lava.size() + 1)*3, lightPositions.data());
 
@@ -193,7 +197,6 @@ int main()
     //Rotation to look down
     PModel = rotate(PModel, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
     //Movement to position further back
-    //model = translate(model, vec3(0.0f, -2.f, -1.5f));
     PModel = translate(PModel, vec3(0.0f, 0.0f, 0.0f));
 
     //Projection matrix
@@ -207,26 +210,20 @@ int main()
     music->play2D("Sound/music.wav", true); // looped playback
     music->setSoundVolume(0.15f);
 
+    glEnable(GL_DEPTH_TEST);
+
     //Game loop
     while (glfwWindowShouldClose(window) == false)
     {
         //Time
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        float time = static_cast<float>(glfwGetTime());
+        deltaTime = time - lastFrame;
+        lastFrame = time;
 
         cameraPos = player->getCameraPosition();
 
-        Shaders.use();
-        Shaders.setVec3("lightPos", cameraPos[0] +flareOffset[0], cameraPos[1] + flareOffset[1], cameraPos[2] + flareOffset[2]);
-        //lightPositions[0] = cameraPos[0] + flareOffset[0];
-        //lightPositions[1] = cameraPos[1] + flareOffset[1];
-        //lightPositions[2] = cameraPos[2] + flareOffset[2];
-        //glUniform3fv(glGetUniformLocation(Shaders.ID, "lightPositions"), lava.size() + 1, lightPositions.data());
-        Shaders.setVec3("camPos", cameraPos[0], cameraPos[1], cameraPos[2]);
-
         //Input
-        ProcessUserInput(window, player); //Takes user input
+        ProcessUserInput(window, player, &Shaders); //Takes user input
 
         //collision checks
         for (auto& collect : collectables) {
@@ -240,61 +237,55 @@ int main()
         }
         
         //Rendering
-        glClearColor(cameraPos[1] / 5, cameraPos[1] / 5, 0.05f+ cameraPos[1] / 5*2, 1.0f); //Colour to display on cleared window
-        glClear(GL_COLOR_BUFFER_BIT); //Clears the colour buffer
-        glClear(GL_DEPTH_BUFFER_BIT); //Might need
+        glClearColor(cameraPos[1] / 10, cameraPos[1] / 10, 0.05f+ cameraPos[1] / 10*2, 1.0f); //Colour to display on cleared window
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clears the colour and depth buffer
 
         //glEnable(GL_CULL_FACE); //Discards all back-facing triangles
-        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CW);
         glDepthFunc(GL_LESS);
 
         //Transformations & Drawing
         //Viewer orientation
-        view = lookAt(player->getCameraPosition(), player->getCameraPosition() + player->getCameraFront(), player->getCameraUp()); //Sets the position of the viewer, the movement direction in relation to it & the world up direction
-        SetMatrices(Shaders, model);
+        view = lookAt(cameraPos, cameraPos + player->getCameraFront(), player->getCameraUp()); //Sets the position of the viewer, the movement direction in relation to it & the world up direction
+        Shaders.setMat4("camera", projection * view);
+        Shaders.setMat4("model", model);
+        //SetMatrices(Shaders, model);
 
         //Drawing
         map->draw();
         // the collectables should be continuously rotating
-        SetMatrices(Shaders, model);
-        Shaders.use();
         for (auto collect : collectables) {
             if (collect != nullptr) {
-                float time = (float)glfwGetTime();
+                
                 vec3 center = collect->getCentrePoint();
 
+                mat4 mod = CModel;
+
                 // adjust when and how to draw the model
-                CModel = translate(CModel, center * 10.0f); // x10 due to model scale
-                CModel = rotate(CModel, time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
-                CModel = translate(CModel, vec3(0.0f, sin(time), 0.0f));
+                mod = translate(mod, center * 10.0f); // x10 due to model scale
+                mod = rotate(mod, time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+                mod = translate(mod, vec3(0.0f, sin(time), 0.0f));
 
-                SetMatrices(Shaders, CModel);
+                Shaders.setMat4("model", mod);
+                //SetMatrices(Shaders, CModel);
                 collect->draw(Shaders);
-
-                // return to origin with default values
-                CModel = translate(CModel, vec3(0.0f, -sin(time), 0.0f));
-                CModel = rotate(CModel, -time * 0.5f, vec3(0.0f, 1.0f, 0.0f));
-                CModel = translate(CModel, -center * 10.0f); // x10 due to model scale
             }
         } 
 
         for (auto plant : plants) {
-            float time = (float)glfwGetTime();
             vec3 center = plant->getCentrePoint();
 
+            mat4 mod = PModel;
+
             //Shift to location of plant
-            PModel = translate(PModel, center*10.0f); // x10 to counteract scale of model
+            mod = translate(mod, center*10.0f); // x10 to counteract scale of model
 
-            SetMatrices(Shaders, PModel);
-            plant->draw(Shaders, PModel, projection, view);
-
-            //return to origin
-            PModel = translate(PModel, -center * 10.0f);
+            Shaders.setMat4("model", mod);
+            plant->draw(Shaders, mod, projection, view);
         }
 
-        Shaders.use();
-        //model = rotate(model, radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-        SetMatrices(Shaders, model);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -333,7 +324,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void ProcessUserInput(GLFWwindow* WindowIn, Player* player)
+void ProcessUserInput(GLFWwindow* WindowIn, Player* player, Shader* shaders)
 {
     //Closes window on 'exit' key press
     if (glfwGetKey(WindowIn, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -341,7 +332,7 @@ void ProcessUserInput(GLFWwindow* WindowIn, Player* player)
         glfwSetWindowShouldClose(WindowIn, true);
     }
 
-    player->handleInput(WindowIn);
+    player->handleInput(WindowIn, shaders);
 
     
 }
